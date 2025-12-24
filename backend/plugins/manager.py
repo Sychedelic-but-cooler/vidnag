@@ -57,7 +57,7 @@ class PluginManager:
         self.logger.app.info(f"Loaded {len(self.plugins)} plugins: {list(self.plugins.keys())}")
 
     def _load_plugin(self, plugin_name: str) -> None:
-        """Load a single plugin"""
+        """Load a single plugin - does NOT raise on failure"""
         try:
             # Import plugin module
             module = importlib.import_module(f"backend.plugins.{plugin_name}.plugin")
@@ -94,11 +94,11 @@ class PluginManager:
 
         except Exception as e:
             self.logger.app.error(
-                f"Failed to load plugin {plugin_name}: {e}",
+                f"Failed to load plugin '{plugin_name}': {e}",
                 plugin=plugin_name,
                 error=str(e)
             )
-            raise
+            # Don't raise - continue with other plugins
 
     def _check_dependencies(self, plugin: Plugin) -> None:
         """Check if plugin dependencies are loaded"""
@@ -109,8 +109,11 @@ class PluginManager:
                 )
 
     def initialize_plugins(self, app: FastAPI) -> None:
-        """Initialize all enabled plugins"""
+        """Initialize all enabled plugins - continues on failures"""
         self.logger.app.info("Initializing plugins...")
+
+        initialized_count = 0
+        failed_plugins = []
 
         # Initialize in load order
         for plugin_name in self.load_order:
@@ -128,15 +131,24 @@ class PluginManager:
                     app.add_middleware(middleware(app))
                     self.logger.app.info(f"Added middleware for: {plugin.name}")
 
+                initialized_count += 1
+
             except Exception as e:
                 self.logger.app.error(
                     f"Failed to initialize plugin '{plugin.name}': {e}",
                     plugin=plugin.name,
                     error=str(e)
                 )
-                raise
+                failed_plugins.append(plugin_name)
+                # Continue with other plugins instead of raising
 
-        self.logger.app.info(f"Initialized {len(self.plugins)} plugins")
+        self.logger.app.info(
+            f"Initialized {initialized_count}/{len(self.plugins)} plugins successfully"
+        )
+        if failed_plugins:
+            self.logger.app.warning(
+                f"Failed to initialize plugins: {', '.join(failed_plugins)}"
+            )
 
     def startup_plugins(self) -> None:
         """Call startup hooks for all plugins"""
