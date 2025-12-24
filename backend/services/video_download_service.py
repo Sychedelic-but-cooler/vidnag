@@ -129,7 +129,7 @@ class VideoDownloadService:
         storage_path = self.settings.get(
             SettingsLevel.APP,
             "storage.base_path",
-            "/var/vidnag/storage"
+            "storage"
         )
 
         import os

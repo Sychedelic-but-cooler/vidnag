@@ -378,3 +378,28 @@ def get_queue_status(
     status = download_manager.get_queue_status()
 
     return status
+
+
+@router.get("/storage/status")
+def get_storage_status(
+    user: User = Depends(get_current_user)
+):
+    """
+    Get storage status
+
+    Returns information about storage directories, sizes, and permissions.
+    Admin-only endpoint for monitoring storage usage.
+    """
+    if not user.is_admin:
+        raise HTTPException(
+            status_code=403,
+            detail="Admin privileges required"
+        )
+
+    from backend.utils.storage import get_storage_info
+    from backend.core.settings import settings, SettingsLevel
+
+    storage_base = settings.get(SettingsLevel.APP, "storage.base_path", "storage")
+    storage_info = get_storage_info(storage_base)
+
+    return storage_info

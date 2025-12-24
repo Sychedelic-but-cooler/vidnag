@@ -77,7 +77,7 @@ class DownloadWorker:
 
             # Get settings
             from backend.core.settings import SettingsLevel
-            temp_path = self.settings.get(SettingsLevel.APP, "storage.temp_path", "/var/vidnag/temp")
+            temp_path = self.settings.get(SettingsLevel.APP, "storage.temp_path", "storage/temp")
             max_size_mb = self.settings.get(SettingsLevel.ADMIN, "downloads.max_download_size_mb", 1000)
             timeout_seconds = self.settings.get(SettingsLevel.ADMIN, "downloads.timeout_seconds", 300)
 
@@ -120,7 +120,7 @@ class DownloadWorker:
             self._update_job_progress(job_id, 80.0, 'Moving to storage')
 
             # Move to final storage location
-            storage_path = self.settings.get(SettingsLevel.APP, "storage.base_path", "/var/vidnag/storage")
+            storage_path = self.settings.get(SettingsLevel.APP, "storage.base_path", "storage")
             video_storage_dir = os.path.join(storage_path, "videos")
 
             final_path = safe_move_file(
@@ -313,7 +313,7 @@ class DownloadWorker:
 
                     # Move partial file to storage
                     from backend.core.settings import SettingsLevel
-                    storage_path = self.settings.get(SettingsLevel.APP, "storage.base_path", "/var/vidnag/storage")
+                    storage_path = self.settings.get(SettingsLevel.APP, "storage.base_path", "storage")
                     video_storage_dir = os.path.join(storage_path, "videos")
 
                     with self.db.session_scope() as session:

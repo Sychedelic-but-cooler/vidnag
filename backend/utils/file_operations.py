@@ -97,7 +97,7 @@ def safe_move_file(
     src: str,
     dest_dir: str,
     filename: str,
-    storage_root: str = "/var/vidnag/storage"
+    storage_root: str = "storage"
 ) -> str:
     """
     Move file with security checks to prevent path traversal attacks
@@ -113,7 +113,7 @@ def safe_move_file(
         src: Source file path
         dest_dir: Destination directory (must be within storage_root)
         filename: Destination filename (will be sanitized)
-        storage_root: Root directory for storage (default: /var/vidnag/storage)
+        storage_root: Root directory for storage (default: storage)
 
     Returns:
         Absolute path to the moved file
@@ -124,7 +124,7 @@ def safe_move_file(
     Example:
         >>> moved_path = safe_move_file(
         ...     "/tmp/download.mp4",
-        ...     "/var/vidnag/storage/videos",
+        ...     "storage/videos",
         ...     "a7b3c9d2-1234-5678-abcd-ef1234567890.mp4"
         ... )
     """

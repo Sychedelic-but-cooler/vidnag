@@ -74,6 +74,30 @@ def create_app() -> FastAPI:
         f"Initializing {settings.get_app_name()} v{settings.get_version()}"
     )
 
+    # Initialize storage directories
+    logger.app.info("Initializing storage directories...")
+    from backend.utils.storage import init_storage, verify_storage_writable
+
+    storage_base = settings.get(SettingsLevel.APP, "storage.base_path", "storage")
+    created, errors = init_storage(storage_base, ["videos", "thumbnails", "temp"])
+
+    if created:
+        logger.app.info(f"Created storage directories: {', '.join(created)}")
+
+    if errors:
+        for error in errors:
+            logger.app.warning(f"Storage initialization warning: {error}")
+
+    # Verify storage is writable
+    writable, write_errors = verify_storage_writable(storage_base)
+    if not writable:
+        logger.app.error("Storage verification failed:")
+        for error in write_errors:
+            logger.app.error(f"  - {error}")
+        raise RuntimeError("Storage directories are not properly configured. Check permissions.")
+
+    logger.app.info(f"Storage initialized and verified: {storage_base}")
+
     # Create FastAPI app
     app = FastAPI(
         title=settings.get_app_name(),
