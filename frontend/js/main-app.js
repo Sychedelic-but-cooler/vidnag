@@ -283,21 +283,37 @@ class VidnagApp {
             return;
         }
 
-        // Fetch status for each active job
+        // Fetch status for real jobs, use placeholder data for temp jobs
         const jobStatuses = await Promise.all(
-            activeJobs.map(job => API.getDownloadStatus(job.job_id).catch(e => null))
+            activeJobs.map(async job => {
+                if (job.is_temp) {
+                    // Return temp job as-is
+                    return job;
+                }
+                // Fetch real job status
+                try {
+                    return await API.getDownloadStatus(job.job_id);
+                } catch (e) {
+                    console.error('Failed to fetch job status:', e);
+                    return null;
+                }
+            })
         );
 
         const html = jobStatuses
-            .filter(status => status && (status.status === 'running' || status.status === 'pending'))
+            .filter(status => {
+                if (!status) return false;
+                // Show temp jobs, pending jobs, and running jobs
+                return status.is_temp || status.status === 'running' || status.status === 'pending';
+            })
             .map(status => this.renderActiveDownload(status))
             .join('');
 
         activeContainer.innerHTML = html || '<p class="empty-state">No active downloads</p>';
 
-        // Remove completed/failed jobs from tracking
+        // Remove completed/failed jobs from tracking (but not temp error jobs)
         jobStatuses.forEach(status => {
-            if (status && (status.status === 'completed' || status.status === 'failed')) {
+            if (status && !status.is_temp && (status.status === 'completed' || status.status === 'failed')) {
                 this.activeDownloads.delete(status.job_id);
             }
         });
@@ -307,23 +323,53 @@ class VidnagApp {
      * Render an active download item
      */
     renderActiveDownload(jobStatus) {
+        const isError = jobStatus.is_error || jobStatus.status === 'failed';
+        const isTemp = jobStatus.is_temp;
+        const progress = jobStatus.progress || 0;
+
+        // For temp error jobs, show close button. For others, show cancel button
+        const actionButton = isError
+            ? `<button class="download-item-cancel" onclick="app.removeDownload('${this.escapeHtml(jobStatus.job_id)}')">×</button>`
+            : isTemp
+            ? '' // No button while fetching info
+            : `<button class="download-item-cancel" onclick="app.cancelDownload(${jobStatus.job_id})">Cancel</button>`;
+
+        const errorClass = isError ? ' error' : '';
+        const titleText = isError && jobStatus.error_message
+            ? this.escapeHtml(jobStatus.error_message)
+            : this.escapeHtml(jobStatus.current_step || 'Processing...');
+
         return `
-            <div class="download-item">
+            <div class="download-item${errorClass}">
                 <div class="download-item-header">
-                    <div class="download-item-title">${jobStatus.current_step || 'Processing...'}</div>
-                    <button class="download-item-cancel" onclick="app.cancelDownload(${jobStatus.job_id})">Cancel</button>
+                    <div class="download-item-title">${titleText}</div>
+                    ${actionButton}
                 </div>
+                ${!isError ? `
                 <div class="download-progress">
                     <div class="download-progress-bar">
-                        <div class="download-progress-fill" style="width: ${jobStatus.progress || 0}%"></div>
+                        <div class="download-progress-fill" style="width: ${progress}%"></div>
                     </div>
                 </div>
                 <div class="download-item-info">
-                    <span>${Math.round(jobStatus.progress || 0)}%</span>
-                    <span>${jobStatus.video?.title || 'Downloading...'}</span>
+                    <span>${Math.round(progress)}%</span>
+                    <span>${this.escapeHtml(jobStatus.video?.title || jobStatus.url || 'Downloading...')}</span>
                 </div>
+                ` : `
+                <div class="download-item-info">
+                    <span>${this.escapeHtml(jobStatus.url || '')}</span>
+                </div>
+                `}
             </div>
         `;
+    }
+
+    /**
+     * Remove a download from tracking (for temp error jobs)
+     */
+    removeDownload(jobId) {
+        this.activeDownloads.delete(jobId);
+        this.updateActiveDownloads();
     }
 
     /**
@@ -477,34 +523,71 @@ class VidnagApp {
 
         console.log('Starting downloads:', urls);
 
+        // Clear input immediately for better UX
+        urlInput.value = '';
+
         // Submit each URL
         let successCount = 0;
         let errorCount = 0;
 
         for (const url of urls) {
+            // Create temporary placeholder with unique ID
+            const tempJobId = `temp_${Date.now()}_${Math.random()}`;
+
+            // Add placeholder to active downloads immediately
+            this.activeDownloads.set(tempJobId, {
+                job_id: tempJobId,
+                video_id: null,
+                url: url,
+                status: 'pending',
+                progress: 0,
+                current_step: 'Fetching video info...',
+                is_temp: true
+            });
+
+            // Refresh UI to show placeholder
+            this.updateActiveDownloads();
+
             try {
                 const result = await API.downloadVideo(url);
                 console.log('Download submitted:', result);
 
-                // Add to active downloads tracking
+                // Remove placeholder
+                this.activeDownloads.delete(tempJobId);
+
+                // Add real job
                 this.activeDownloads.set(result.job_id, {
                     job_id: result.job_id,
                     video_id: result.video_id,
                     url: url,
-                    status: result.status
+                    status: result.status,
+                    progress: 0,
+                    current_step: 'Queued'
                 });
 
                 successCount++;
             } catch (error) {
                 console.error('Failed to submit download:', error);
                 errorCount++;
+
+                // Update placeholder to show error
+                const placeholder = this.activeDownloads.get(tempJobId);
+                if (placeholder) {
+                    placeholder.status = 'failed';
+                    placeholder.current_step = 'Failed';
+                    placeholder.error_message = error.message || 'Failed to submit download';
+                    placeholder.is_error = true;
+                }
+
                 this.showError(`Failed to download: ${url}\n${error.message}`);
             }
+
+            // Refresh UI after each submission
+            this.updateActiveDownloads();
         }
 
-        // Clear input on success
+        // Show summary message
         if (successCount > 0) {
-            urlInput.value = '';
             this.showSuccess(`Added ${successCount} download(s) to queue`);
 
             // Refresh the downloads view

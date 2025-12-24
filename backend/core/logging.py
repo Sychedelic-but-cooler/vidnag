@@ -148,30 +148,60 @@ class VidnagLogger:
         if self.browser_handler:
             self.browser_handler.emit(self.log_type, level, message, extra)
 
+    def _extract_logging_params(self, kwargs: Dict[str, Any]) -> tuple[Dict[str, Any], Dict[str, Any]]:
+        """Extract special logging parameters from kwargs"""
+        # Special parameters that should be passed directly to logger, not in extra
+        special_params = ['exc_info', 'stack_info', 'stacklevel', 'extra']
+        logging_params = {}
+        extra_params = {}
+
+        for key, value in kwargs.items():
+            if key in special_params:
+                logging_params[key] = value
+            else:
+                extra_params[key] = value
+
+        return logging_params, extra_params
+
     def debug(self, message: str, **kwargs) -> None:
         """Log debug message"""
-        self.logger.debug(message, extra=kwargs)
-        self._emit_to_browser("DEBUG", message, kwargs)
+        logging_params, extra_params = self._extract_logging_params(kwargs)
+        if extra_params:
+            logging_params['extra'] = extra_params
+        self.logger.debug(message, **logging_params)
+        self._emit_to_browser("DEBUG", message, extra_params)
 
     def info(self, message: str, **kwargs) -> None:
         """Log info message"""
-        self.logger.info(message, extra=kwargs)
-        self._emit_to_browser("INFO", message, kwargs)
+        logging_params, extra_params = self._extract_logging_params(kwargs)
+        if extra_params:
+            logging_params['extra'] = extra_params
+        self.logger.info(message, **logging_params)
+        self._emit_to_browser("INFO", message, extra_params)
 
     def warning(self, message: str, **kwargs) -> None:
         """Log warning message"""
-        self.logger.warning(message, extra=kwargs)
-        self._emit_to_browser("WARNING", message, kwargs)
+        logging_params, extra_params = self._extract_logging_params(kwargs)
+        if extra_params:
+            logging_params['extra'] = extra_params
+        self.logger.warning(message, **logging_params)
+        self._emit_to_browser("WARNING", message, extra_params)
 
     def error(self, message: str, **kwargs) -> None:
         """Log error message"""
-        self.logger.error(message, extra=kwargs)
-        self._emit_to_browser("ERROR", message, kwargs)
+        logging_params, extra_params = self._extract_logging_params(kwargs)
+        if extra_params:
+            logging_params['extra'] = extra_params
+        self.logger.error(message, **logging_params)
+        self._emit_to_browser("ERROR", message, extra_params)
 
     def critical(self, message: str, **kwargs) -> None:
         """Log critical message"""
-        self.logger.critical(message, extra=kwargs)
-        self._emit_to_browser("CRITICAL", message, kwargs)
+        logging_params, extra_params = self._extract_logging_params(kwargs)
+        if extra_params:
+            logging_params['extra'] = extra_params
+        self.logger.critical(message, **logging_params)
+        self._emit_to_browser("CRITICAL", message, extra_params)
 
 
 class LogManager:

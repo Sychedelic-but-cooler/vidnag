@@ -16,6 +16,19 @@
     background: var(--glass-bg-strong);
 }
 
+.download-item.error {
+    border-color: var(--color-error);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.download-item.error .download-item-title {
+    color: var(--color-error);
+}
+
+.download-item.error:hover {
+    background: rgba(239, 68, 68, 0.15);
+}
+
 .download-item-header {
     display: flex;
     justify-content: space-between;
