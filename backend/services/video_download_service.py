@@ -85,7 +85,7 @@ class VideoDownloadService:
             raise DownloadServiceError(f"Invalid URL: {error_msg}")
 
         # Step 2: Get video info (with timeout)
-        self.logger.info(f"Fetching video info for URL: {url}")
+        self.logger.app.info(f"Fetching video info for URL: {url}")
 
         try:
             video_info = YtDlpWrapper.get_video_info(url, timeout=30)
@@ -100,7 +100,7 @@ class VideoDownloadService:
         estimated_size = video_info.get('filesize') or video_info.get('filesize_approx')
         ext = video_info.get('ext', 'mp4')
 
-        self.logger.info(
+        self.logger.app.info(
             f"Video info: title='{video_title}', duration={duration}s, "
             f"estimated_size={estimated_size} bytes"
         )
@@ -172,7 +172,7 @@ class VideoDownloadService:
         db.add(job)
         db.commit()
 
-        self.logger.info(
+        self.logger.app.info(
             f"Created download job {job.id} for video {video.id}, "
             f"user {user_id}, URL: {url}"
         )
@@ -437,7 +437,7 @@ class VideoDownloadService:
 
         db.commit()
 
-        self.logger.info(
+        self.logger.app.info(
             f"Video {video_id} marked as deleted by user {user_id}"
         )
 

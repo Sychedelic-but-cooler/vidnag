@@ -73,7 +73,7 @@ class DownloadWorker:
                 job.progress = 0.0
                 session.commit()
 
-                self.logger.info(f"Starting download for job {job_id}, video {video_id}, URL: {url}")
+                self.logger.app.info(f"Starting download for job {job_id}, video {video_id}, URL: {url}")
 
             # Get settings
             from backend.core.settings import SettingsLevel
@@ -95,7 +95,7 @@ class DownloadWorker:
                 max_size_mb=max_size_mb
             )
 
-            self.logger.info(f"Executing yt-dlp command: {' '.join(cmd)}")
+            self.logger.app.info(f"Executing yt-dlp command: {' '.join(cmd)}")
 
             # Execute download with progress monitoring
             temp_output_path = self._execute_download_subprocess(
@@ -105,7 +105,7 @@ class DownloadWorker:
             if not temp_output_path or not os.path.exists(temp_output_path):
                 raise Exception("Download completed but output file not found")
 
-            self.logger.info(f"Download completed: {temp_output_path}")
+            self.logger.app.info(f"Download completed: {temp_output_path}")
 
             # Update progress
             self._update_job_progress(job_id, 70.0, 'Calculating checksum')
@@ -114,7 +114,7 @@ class DownloadWorker:
             file_size = get_file_size(temp_output_path)
             checksum = calculate_file_checksum(temp_output_path)
 
-            self.logger.info(f"File size: {file_size} bytes, checksum: {checksum}")
+            self.logger.app.info(f"File size: {file_size} bytes, checksum: {checksum}")
 
             # Update progress
             self._update_job_progress(job_id, 80.0, 'Moving to storage')
@@ -130,7 +130,7 @@ class DownloadWorker:
                 storage_root=storage_path
             )
 
-            self.logger.info(f"File moved to: {final_path}")
+            self.logger.app.info(f"File moved to: {final_path}")
 
             # Update progress
             self._update_job_progress(job_id, 90.0, 'Updating database')
@@ -160,18 +160,18 @@ class DownloadWorker:
 
                 session.commit()
 
-            self.logger.info(f"Job {job_id} completed successfully")
+            self.logger.app.info(f"Job {job_id} completed successfully")
             return True
 
         except subprocess.CalledProcessError as e:
             error_msg = self._handle_subprocess_error(e, job_id, video_id, temp_output_path)
-            self.logger.error(f"Job {job_id} failed: {error_msg}")
+            self.logger.app.error(f"Job {job_id} failed: {error_msg}")
             return False
 
         except Exception as e:
             error_msg = f"Unexpected error: {str(e)}"
             error_trace = traceback.format_exc()
-            self.logger.error(f"Job {job_id} failed with exception: {error_msg}\n{error_trace}")
+            self.logger.app.error(f"Job {job_id} failed with exception: {error_msg}\n{error_trace}")
 
             self._mark_job_failed(job_id, error_msg, error_trace)
             return False
@@ -331,7 +331,7 @@ class DownloadWorker:
                             session.commit()
 
                 except Exception as e:
-                    self.logger.error(f"Failed to save partial download: {e}")
+                    self.logger.app.error(f"Failed to save partial download: {e}")
 
             self._mark_job_failed(job_id, error_msg, error_output)
             return error_msg
@@ -359,7 +359,7 @@ class DownloadWorker:
                     job.current_step = step
                     session.commit()
         except Exception as e:
-            self.logger.error(f"Failed to update job progress: {e}")
+            self.logger.app.error(f"Failed to update job progress: {e}")
 
     def _mark_job_failed(self, job_id: int, error_message: str, error_trace: str = None) -> None:
         """Mark job as failed in database"""
@@ -382,4 +382,4 @@ class DownloadWorker:
 
                     session.commit()
         except Exception as e:
-            self.logger.error(f"Failed to mark job as failed: {e}")
+            self.logger.app.error(f"Failed to mark job as failed: {e}")

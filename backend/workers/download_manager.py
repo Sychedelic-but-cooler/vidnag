@@ -62,7 +62,7 @@ class DownloadManager:
         )
         self.poller_thread.start()
 
-        self.logger.info(
+        self.logger.app.info(
             f"DownloadManager initialized with {self.max_workers} max workers"
         )
 
@@ -73,7 +73,7 @@ class DownloadManager:
         This continuously checks for available worker slots and schedules
         pending jobs from the database queue.
         """
-        self.logger.info("Download queue poller started")
+        self.logger.app.info("Download queue poller started")
 
         while not self.shutdown_requested:
             try:
@@ -97,15 +97,15 @@ class DownloadManager:
                     scheduled = self._schedule_pending_jobs(available_slots)
 
                     if scheduled > 0:
-                        self.logger.info(
+                        self.logger.app.info(
                             f"Scheduled {scheduled} job(s), "
                             f"{len(self.active_jobs)}/{self.max_workers} workers active"
                         )
 
             except Exception as e:
-                self.logger.error(f"Error in queue polling loop: {e}", exc_info=True)
+                self.logger.app.error(f"Error in queue polling loop: {e}", exc_info=True)
 
-        self.logger.info("Download queue poller stopped")
+        self.logger.app.info("Download queue poller stopped")
 
     def _schedule_pending_jobs(self, count: int) -> int:
         """
@@ -151,18 +151,18 @@ class DownloadManager:
 
                         scheduled_count += 1
 
-                        self.logger.info(
+                        self.logger.app.info(
                             f"Scheduled job {job.id} for video {job.video_id}"
                         )
 
                     except Exception as e:
-                        self.logger.error(
+                        self.logger.app.error(
                             f"Failed to schedule job {job.id}: {e}",
                             exc_info=True
                         )
 
         except Exception as e:
-            self.logger.error(f"Failed to fetch pending jobs: {e}", exc_info=True)
+            self.logger.app.error(f"Failed to fetch pending jobs: {e}", exc_info=True)
 
         return scheduled_count
 
@@ -177,18 +177,18 @@ class DownloadManager:
             True if job succeeded, False otherwise
         """
         try:
-            self.logger.info(f"Worker thread starting job {job_id}")
+            self.logger.app.info(f"Worker thread starting job {job_id}")
             success = self.worker.execute_download(job_id)
 
             if success:
-                self.logger.info(f"Worker thread completed job {job_id} successfully")
+                self.logger.app.info(f"Worker thread completed job {job_id} successfully")
             else:
-                self.logger.warning(f"Worker thread completed job {job_id} with failure")
+                self.logger.app.warning(f"Worker thread completed job {job_id} with failure")
 
             return success
 
         except Exception as e:
-            self.logger.error(
+            self.logger.app.error(
                 f"Worker thread failed for job {job_id}: {e}",
                 exc_info=True
             )
@@ -211,12 +211,12 @@ class DownloadManager:
             try:
                 future.result()  # This will raise if the job raised
             except Exception as e:
-                self.logger.error(
+                self.logger.app.error(
                     f"Job {job_id} raised exception: {e}",
                     exc_info=True
                 )
 
-            self.logger.debug(
+            self.logger.app.debug(
                 f"Cleaned up job {job_id}, "
                 f"{len(self.active_jobs)}/{self.max_workers} workers active"
             )
@@ -226,7 +226,7 @@ class DownloadManager:
             self.shutdown_flag.set()
 
         except Exception as e:
-            self.logger.error(f"Error cleaning up job {job_id}: {e}", exc_info=True)
+            self.logger.app.error(f"Error cleaning up job {job_id}: {e}", exc_info=True)
 
     def notify_job_submitted(self):
         """
@@ -235,7 +235,7 @@ class DownloadManager:
         This triggers an immediate check for pending jobs instead of
         waiting for the next polling interval.
         """
-        self.logger.debug("Job submission notification received")
+        self.logger.app.debug("Job submission notification received")
         self.shutdown_flag.set()
 
     def get_queue_status(self) -> Dict:
@@ -259,7 +259,7 @@ class DownloadManager:
                     ProcessingJob.status == 'pending'
                 ).count()
         except Exception as e:
-            self.logger.error(f"Failed to get pending count: {e}")
+            self.logger.app.error(f"Failed to get pending count: {e}")
             pending_count = 0
 
         return {
@@ -277,7 +277,7 @@ class DownloadManager:
             wait: Whether to wait for active jobs to complete
             timeout: Maximum time to wait in seconds (None = wait indefinitely)
         """
-        self.logger.info("Shutting down DownloadManager...")
+        self.logger.app.info("Shutting down DownloadManager...")
 
         # Signal shutdown to poller thread
         self.shutdown_requested = True
@@ -291,9 +291,9 @@ class DownloadManager:
         self.executor.shutdown(wait=wait, cancel_futures=not wait)
 
         if wait:
-            self.logger.info("DownloadManager shutdown complete (waited for jobs)")
+            self.logger.app.info("DownloadManager shutdown complete (waited for jobs)")
         else:
-            self.logger.info("DownloadManager shutdown complete (cancelled pending jobs)")
+            self.logger.app.info("DownloadManager shutdown complete (cancelled pending jobs)")
 
     def cancel_job(self, job_id: int) -> bool:
         """
@@ -313,7 +313,7 @@ class DownloadManager:
             cancelled = future.cancel()
 
             if cancelled:
-                self.logger.info(f"Cancelled job {job_id}")
+                self.logger.app.info(f"Cancelled job {job_id}")
 
                 # Update job status in database
                 try:
@@ -327,11 +327,11 @@ class DownloadManager:
                             job.completed_at = datetime.utcnow()
                             session.commit()
                 except Exception as e:
-                    self.logger.error(f"Failed to update cancelled job {job_id}: {e}")
+                    self.logger.app.error(f"Failed to update cancelled job {job_id}: {e}")
 
                 return True
             else:
-                self.logger.warning(
+                self.logger.app.warning(
                     f"Could not cancel job {job_id} (already running)"
                 )
                 return False
@@ -348,9 +348,9 @@ class DownloadManager:
                         job.status = 'cancelled'
                         job.completed_at = datetime.utcnow()
                         session.commit()
-                        self.logger.info(f"Cancelled pending job {job_id}")
+                        self.logger.app.info(f"Cancelled pending job {job_id}")
                         return True
             except Exception as e:
-                self.logger.error(f"Failed to cancel pending job {job_id}: {e}")
+                self.logger.app.error(f"Failed to cancel pending job {job_id}: {e}")
 
             return False

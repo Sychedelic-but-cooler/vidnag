@@ -175,7 +175,7 @@ def submit_download(
         raise HTTPException(status_code=400, detail=str(e))
 
     except Exception as e:
-        logger.error(f"Unexpected error submitting download: {e}", exc_info=True)
+        logger.app.error(f"Unexpected error submitting download: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -214,7 +214,7 @@ def get_download_status(
 
     except Exception as e:
         logger = get_logger()
-        logger.error(f"Error getting download status: {e}", exc_info=True)
+        logger.app.error(f"Error getting download status: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -257,7 +257,7 @@ def list_videos(
 
     except Exception as e:
         logger = get_logger()
-        logger.error(f"Error listing videos: {e}", exc_info=True)
+        logger.app.error(f"Error listing videos: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -296,7 +296,7 @@ def get_video(
 
     except Exception as e:
         logger = get_logger()
-        logger.error(f"Error getting video: {e}", exc_info=True)
+        logger.app.error(f"Error getting video: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -346,7 +346,7 @@ def delete_video(
             raise HTTPException(status_code=400, detail=str(e))
 
     except Exception as e:
-        logger.error(f"Error deleting video: {e}", exc_info=True)
+        logger.app.error(f"Error deleting video: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
