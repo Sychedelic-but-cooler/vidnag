@@ -148,8 +148,15 @@ const API = {
     /**
      * Download video from URL
      */
-    async downloadVideo(url) {
-        return this.post('/videos/download', { url });
+    async downloadVideo(url, title = null, visibility = 'private') {
+        return this.post('/videos/download', { url, title, visibility });
+    },
+
+    /**
+     * Get download job status
+     */
+    async getDownloadStatus(jobId) {
+        return this.get(`/videos/download/${jobId}`);
     },
 
     /**

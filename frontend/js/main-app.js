@@ -9,6 +9,7 @@ class VidnagApp {
         this.currentUser = null;
         this.activeDownloads = new Map();
         this.activeConversions = new Map();
+        this.pollInterval = null;
     }
 
     /**
@@ -208,16 +209,229 @@ class VidnagApp {
     }
 
     /**
-     * Load downloads data (placeholder)
+     * Load downloads data
      */
     async loadDownloads() {
         console.log('Loading downloads...');
-        // TODO: Implement actual API call
-        // For now, show empty state
-        const historyContainer = document.getElementById('download-history');
-        if (historyContainer) {
-            historyContainer.innerHTML = '<p class="empty-state">No downloads yet</p>';
+
+        try {
+            // Load video history
+            const response = await API.getVideos({ source_type: 'download', page: 1, per_page: 20 });
+
+            const historyContainer = document.getElementById('download-history');
+            if (!historyContainer) return;
+
+            if (response.videos && response.videos.length > 0) {
+                historyContainer.innerHTML = response.videos.map(video => this.renderVideoHistoryItem(video)).join('');
+            } else {
+                historyContainer.innerHTML = '<p class="empty-state">No downloads yet</p>';
+            }
+
+            // Update active downloads display
+            await this.updateActiveDownloads();
+        } catch (error) {
+            console.error('Failed to load downloads:', error);
         }
+    }
+
+    /**
+     * Render a video history item
+     */
+    renderVideoHistoryItem(video) {
+        const statusClass = video.status === 'ready' ? 'completed' :
+                          video.status === 'error' ? 'failed' :
+                          video.status === 'processing' ? 'processing' : 'cancelled';
+
+        const statusText = video.status === 'ready' ? '✓ Completed' :
+                          video.status === 'error' ? '✗ Failed' :
+                          video.status === 'processing' ? '⟳ Processing' : '✗ Cancelled';
+
+        return `
+            <div class="history-item">
+                <div class="history-item-thumbnail">
+                    📹
+                </div>
+                <div class="history-item-info">
+                    <div class="history-item-title">${this.escapeHtml(video.title)}</div>
+                    <div class="history-item-meta">
+                        <span class="history-item-status ${statusClass}">${statusText}</span>
+                        ${video.file_size > 0 ? `<span>${this.formatFileSize(video.file_size)}</span>` : ''}
+                        ${video.duration ? `<span>${this.formatDuration(video.duration)}</span>` : ''}
+                        ${video.created_at ? `<span>${this.formatDate(video.created_at)}</span>` : ''}
+                    </div>
+                    ${video.error_message ? `<div class="error-text">${this.escapeHtml(video.error_message)}</div>` : ''}
+                </div>
+                <div class="history-item-actions">
+                    ${video.status === 'ready' ? `<button class="glass-btn-small" onclick="app.downloadFile(${video.id})">Download</button>` : ''}
+                    <button class="glass-btn-small" onclick="app.deleteVideo(${video.id})">Delete</button>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Update active downloads display
+     */
+    async updateActiveDownloads() {
+        const activeContainer = document.getElementById('active-downloads');
+        if (!activeContainer) return;
+
+        const activeJobs = Array.from(this.activeDownloads.values());
+
+        if (activeJobs.length === 0) {
+            activeContainer.innerHTML = '<p class="empty-state">No active downloads</p>';
+            return;
+        }
+
+        // Fetch status for each active job
+        const jobStatuses = await Promise.all(
+            activeJobs.map(job => API.getDownloadStatus(job.job_id).catch(e => null))
+        );
+
+        const html = jobStatuses
+            .filter(status => status && (status.status === 'running' || status.status === 'pending'))
+            .map(status => this.renderActiveDownload(status))
+            .join('');
+
+        activeContainer.innerHTML = html || '<p class="empty-state">No active downloads</p>';
+
+        // Remove completed/failed jobs from tracking
+        jobStatuses.forEach(status => {
+            if (status && (status.status === 'completed' || status.status === 'failed')) {
+                this.activeDownloads.delete(status.job_id);
+            }
+        });
+    }
+
+    /**
+     * Render an active download item
+     */
+    renderActiveDownload(jobStatus) {
+        return `
+            <div class="download-item">
+                <div class="download-item-header">
+                    <div class="download-item-title">${jobStatus.current_step || 'Processing...'}</div>
+                    <button class="download-item-cancel" onclick="app.cancelDownload(${jobStatus.job_id})">Cancel</button>
+                </div>
+                <div class="download-progress">
+                    <div class="download-progress-bar">
+                        <div class="download-progress-fill" style="width: ${jobStatus.progress || 0}%"></div>
+                    </div>
+                </div>
+                <div class="download-item-info">
+                    <span>${Math.round(jobStatus.progress || 0)}%</span>
+                    <span>${jobStatus.video?.title || 'Downloading...'}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Start polling for download status updates
+     */
+    startDownloadPolling() {
+        // Clear existing interval
+        if (this.pollInterval) {
+            clearInterval(this.pollInterval);
+        }
+
+        // Poll every 2 seconds
+        this.pollInterval = setInterval(async () => {
+            if (this.activeDownloads.size > 0) {
+                await this.updateActiveDownloads();
+            } else {
+                // Stop polling if no active downloads
+                clearInterval(this.pollInterval);
+                this.pollInterval = null;
+            }
+        }, 2000);
+    }
+
+    /**
+     * Cancel a download
+     */
+    async cancelDownload(jobId) {
+        if (!confirm('Cancel this download?')) return;
+
+        try {
+            await API.cancelJob(jobId);
+            this.activeDownloads.delete(jobId);
+            await this.updateActiveDownloads();
+            this.showSuccess('Download cancelled');
+        } catch (error) {
+            console.error('Failed to cancel download:', error);
+            this.showError('Failed to cancel download');
+        }
+    }
+
+    /**
+     * Delete a video
+     */
+    async deleteVideo(videoId) {
+        if (!confirm('Delete this video?')) return;
+
+        try {
+            await API.deleteVideo(videoId);
+            await this.loadDownloads();
+            this.showSuccess('Video deleted');
+        } catch (error) {
+            console.error('Failed to delete video:', error);
+            this.showError('Failed to delete video');
+        }
+    }
+
+    /**
+     * Download a file
+     */
+    downloadFile(videoId) {
+        // TODO: Implement file download
+        window.open(`/api/videos/${videoId}/download`, '_blank');
+    }
+
+    /**
+     * Helper: Format file size
+     */
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    /**
+     * Helper: Format duration
+     */
+    formatDuration(seconds) {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = Math.floor(seconds % 60);
+        if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    /**
+     * Helper: Format date
+     */
+    formatDate(isoString) {
+        const date = new Date(isoString);
+        const now = new Date();
+        const diff = now - date;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+        if (days === 0) return 'Today';
+        if (days === 1) return 'Yesterday';
+        if (days < 7) return `${days} days ago`;
+        return date.toLocaleDateString();
+    }
+
+    /**
+     * Helper: Escape HTML
+     */
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     /**
@@ -262,11 +476,47 @@ class VidnagApp {
         }
 
         console.log('Starting downloads:', urls);
-        this.showSuccess(`Added ${urls.length} download(s) to queue`);
 
-        // TODO: Implement actual download logic
-        // For now, just clear the input
-        urlInput.value = '';
+        // Submit each URL
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const url of urls) {
+            try {
+                const result = await API.downloadVideo(url);
+                console.log('Download submitted:', result);
+
+                // Add to active downloads tracking
+                this.activeDownloads.set(result.job_id, {
+                    job_id: result.job_id,
+                    video_id: result.video_id,
+                    url: url,
+                    status: result.status
+                });
+
+                successCount++;
+            } catch (error) {
+                console.error('Failed to submit download:', error);
+                errorCount++;
+                this.showError(`Failed to download: ${url}\n${error.message}`);
+            }
+        }
+
+        // Clear input on success
+        if (successCount > 0) {
+            urlInput.value = '';
+            this.showSuccess(`Added ${successCount} download(s) to queue`);
+
+            // Refresh the downloads view
+            await this.loadDownloads();
+
+            // Start polling for status updates
+            this.startDownloadPolling();
+        }
+
+        if (errorCount > 0 && successCount === 0) {
+            this.showError(`Failed to add ${errorCount} download(s)`);
+        }
     }
 
     /**
