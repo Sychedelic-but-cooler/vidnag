@@ -17,7 +17,7 @@
     padding: var(--space-sm);
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     transition: all var(--transition-fast);
 }
 
@@ -100,7 +100,7 @@
     padding: var(--space-xs) var(--space-sm);
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-sm);
+    border-radius: 8px;
     font-size: var(--text-xs);
     color: var(--text-secondary);
     transition: all var(--transition-fast);
@@ -140,7 +140,7 @@
     padding: var(--space-md);
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     transition: all var(--transition-fast);
 }
 
@@ -309,7 +309,7 @@
     padding: var(--space-md);
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     transition: all var(--transition-fast);
 }
 
@@ -357,7 +357,7 @@
 
 .upload-zone {
     border: 2px dashed var(--glass-border);
-    border-radius: var(--radius-lg);
+    border-radius: 16px;
     padding: var(--space-xl);
     text-align: center;
     transition: all var(--transition-base);
@@ -372,9 +372,16 @@
 }
 
 .upload-icon {
-    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: var(--space-sm);
+    color: var(--color-primary);
     filter: drop-shadow(0 0 10px rgba(var(--color-primary-rgb, 102, 126, 234), 0.3));
+}
+
+.upload-icon svg {
+    display: block;
 }
 
 .upload-text {
@@ -512,8 +519,9 @@
         padding: var(--space-lg);
     }
 
-    .upload-icon {
-        font-size: 2rem;
+    .upload-icon svg {
+        width: 40px;
+        height: 40px;
     }
 
     .upload-text {
@@ -583,8 +591,9 @@
         padding: var(--space-md);
     }
 
-    .upload-icon {
-        font-size: 1.5rem;
+    .upload-icon svg {
+        width: 32px;
+        height: 32px;
     }
 
     .upload-text {

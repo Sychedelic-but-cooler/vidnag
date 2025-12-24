@@ -155,7 +155,7 @@
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
+    border-radius: 16px;
     padding: var(--space-lg);
     box-shadow: var(--glass-shadow);
     transition: all var(--transition-base);
@@ -196,7 +196,7 @@
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 2px solid var(--glass-border);
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     padding: var(--space-sm) var(--space-md);
     color: var(--text-primary);
     font-size: var(--text-base);
@@ -232,7 +232,7 @@
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 0.75rem 2rem;
     color: var(--text-primary);
     font-size: 1rem;
@@ -293,7 +293,7 @@
 .glass-btn-icon {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 0.6rem;
     color: var(--text-primary);
     cursor: pointer;
@@ -309,6 +309,10 @@
     background: var(--glass-bg-strong);
     border-color: var(--color-primary);
     box-shadow: 0 4px 12px rgba(var(--color-primary-rgb, 102, 126, 234), 0.2);
+}
+
+.glass-btn-icon svg {
+    display: block;
 }
 
 /* Button Groups */
@@ -372,7 +376,7 @@
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
+    border-radius: 16px;
     padding: var(--space-lg);
 }
 

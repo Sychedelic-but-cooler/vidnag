@@ -65,10 +65,6 @@
     gap: var(--space-sm);
 }
 
-.header-right .glass-btn-icon span {
-    font-size: 1.25rem;
-}
-
 .header-right a.glass-btn-icon {
     text-decoration: none;
     display: inline-flex;
@@ -124,8 +120,9 @@
         padding: var(--space-xs);
     }
 
-    .header-right .glass-btn-icon span {
-        font-size: 1.1rem;
+    .header-right .glass-btn-icon svg {
+        width: 18px;
+        height: 18px;
     }
 }
 
@@ -158,8 +155,9 @@
         padding: var(--space-xs);
     }
 
-    .header-right .glass-btn-icon span {
-        font-size: 1rem;
+    .header-right .glass-btn-icon svg {
+        width: 16px;
+        height: 16px;
     }
 
     /* Show only icons on mobile - hide text */
@@ -202,8 +200,9 @@
         height: 28px;
     }
 
-    .header-right .glass-btn-icon span {
-        font-size: 0.9rem;
+    .header-right .glass-btn-icon svg {
+        width: 14px;
+        height: 14px;
     }
 
     #logout-btn {

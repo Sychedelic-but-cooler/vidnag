@@ -29,24 +29,46 @@
 
         <div class="header-right">
             <button class="glass-btn-icon" id="profile-btn" title="Profile" aria-label="Profile">
-                <span>👤</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
             </button>
 
             <button class="glass-btn-icon" id="settings-btn" title="Settings" aria-label="Settings">
-                <span>⚙️</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v6m0 6v6m5.2-13.8l-4.2 4.2m-2 2l-4.2 4.2M23 12h-6m-6 0H1m18.8-5.2l-4.2 4.2m-2 2l-4.2 4.2"></path>
+                </svg>
             </button>
 
             <!-- Admin button - shown only if user is admin -->
             <button class="glass-btn-icon" id="admin-btn" title="Admin Portal" aria-label="Admin Portal" style="display: none;">
-                <span>🛡️</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
             </button>
 
             <a href="https://github.com/anthropics/vidnag" target="_blank" class="glass-btn-icon" title="Help" aria-label="Help">
-                <span>❓</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
             </a>
 
             <button class="glass-btn-icon" id="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
-                <span>🎨</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
             </button>
 
             <button class="glass-btn" id="logout-btn">Logout</button>
@@ -56,17 +78,31 @@
     <!-- Tab Navigation -->
     <nav class="tab-navigation glass">
         <button class="tab-btn active" data-tab="downloads">
-            <span class="tab-icon">📥</span>
+            <span class="tab-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+            </span>
             <span class="tab-label">Video Downloads</span>
         </button>
 
         <button class="tab-btn" data-tab="tools">
-            <span class="tab-icon">🛠️</span>
+            <span class="tab-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                </svg>
+            </span>
             <span class="tab-label">Media Tools</span>
         </button>
 
         <button class="tab-btn" data-tab="browser">
-            <span class="tab-icon">📁</span>
+            <span class="tab-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </span>
             <span class="tab-label">File Browser</span>
         </button>
     </nav>
@@ -90,9 +126,7 @@
                                 placeholder="https://youtube.com/watch?v=...&#10;https://vimeo.com/..."
                             ></textarea>
                         </div>
-                        <button class="glass-btn-primary" id="download-btn">
-                            <span>📥</span> Download
-                        </button>
+                        <button class="glass-btn-primary" id="download-btn">Download</button>
                     </div>
 
                     <!-- Active Downloads -->
@@ -200,7 +234,13 @@
                 <!-- Upload Section -->
                 <div class="glass-card upload-section">
                     <div class="upload-zone" id="upload-zone">
-                        <div class="upload-icon">📤</div>
+                        <div class="upload-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
                         <p class="upload-text">Drag & Drop files here or</p>
                         <button class="glass-btn-primary" id="choose-files-btn">Choose Files</button>
                         <input type="file" id="file-input" multiple accept="video/*,audio/*" style="display: none;">
