@@ -236,6 +236,10 @@ class DownloadWorker:
 
             if return_code != 0:
                 full_output = ''.join(output_lines)
+                self.logger.app.error(
+                    f"yt-dlp exited with code {return_code} for job {job_id}. "
+                    f"Command: {' '.join(cmd)}"
+                )
                 raise subprocess.CalledProcessError(return_code, cmd, output=full_output)
 
             # Determine actual output filename
@@ -343,8 +347,17 @@ class DownloadWorker:
             error_msg = "Video is unavailable or has been removed"
         elif "Private video" in error_output:
             error_msg = "Video is private and cannot be downloaded"
+        elif "ERROR:" in error_output:
+            # Extract the actual error message after "ERROR:"
+            error_lines = [line for line in error_output.split('\n') if 'ERROR:' in line]
+            if error_lines:
+                error_msg = f"Download failed: {error_lines[0][:500]}"
+            else:
+                error_msg = f"Download failed: {error_output[:500]}"
         else:
-            error_msg = f"Download failed: {error_output[:200]}"  # Limit error message length
+            # Log full error for debugging
+            self.logger.app.error(f"Full subprocess output for job {job_id}: {error_output}")
+            error_msg = f"Download failed: {error_output[:500]}"  # Increased limit
 
         self._mark_job_failed(job_id, error_msg, error_output)
         return error_msg
