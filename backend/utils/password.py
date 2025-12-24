@@ -19,7 +19,26 @@ def hash_password(password: str) -> str:
 
     Returns:
         str: Hashed password
+
+    Note:
+        Bcrypt has a maximum password length of 72 bytes.
+        Passwords are automatically truncated to this limit.
     """
+    # Bcrypt has a 72-byte limit, truncate if necessary
+    # Encode to bytes, truncate to 72 bytes, handle as bytes
+    password_bytes = password.encode('utf-8')
+    if len(password_bytes) > 72:
+        # Truncate to 72 bytes, being careful not to split UTF-8 sequences
+        password_bytes = password_bytes[:72]
+        # Find the last valid UTF-8 character boundary
+        while len(password_bytes) > 0:
+            try:
+                password = password_bytes.decode('utf-8')
+                break
+            except UnicodeDecodeError:
+                # We cut in the middle of a multi-byte character, try one byte less
+                password_bytes = password_bytes[:-1]
+
     return pwd_context.hash(password)
 
 
@@ -33,7 +52,22 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
     Returns:
         bool: True if password matches
+
+    Note:
+        Applies the same 72-byte truncation as hash_password for consistency.
     """
+    # Apply same 72-byte truncation as when hashing
+    password_bytes = plain_password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
+        # Find the last valid UTF-8 character boundary
+        while len(password_bytes) > 0:
+            try:
+                plain_password = password_bytes.decode('utf-8')
+                break
+            except UnicodeDecodeError:
+                password_bytes = password_bytes[:-1]
+
     return pwd_context.verify(plain_password, hashed_password)
 
 
@@ -85,6 +119,10 @@ def check_password_requirements(
     """
     if len(password) < min_length:
         return False, f"Password must be at least {min_length} characters long"
+
+    # Warn if password exceeds bcrypt's 72-byte limit (will be truncated)
+    if len(password.encode('utf-8')) > 72:
+        return False, "Password is too long (maximum 72 bytes)"
 
     if require_uppercase and not any(c.isupper() for c in password):
         return False, "Password must contain at least one uppercase letter"
