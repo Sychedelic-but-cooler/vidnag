@@ -121,7 +121,7 @@ class Video(Base, TimestampMixin):
         CheckConstraint("visibility IN ('private', 'unlisted', 'public')", name='check_visibility'),
         CheckConstraint("source_type IN ('upload', 'download')", name='check_source_type'),
         CheckConstraint("status IN ('processing', 'ready', 'error', 'deleted')", name='check_status'),
-        CheckConstraint('file_size > 0', name='check_file_size_positive'),
+        CheckConstraint('file_size >= 0', name='check_file_size_positive'),  # Allow 0 for processing videos
         CheckConstraint('view_count >= 0', name='check_view_count_positive'),
         Index('idx_video_user_status', 'user_id', 'status'),
         Index('idx_video_visibility_status', 'visibility', 'status'),
