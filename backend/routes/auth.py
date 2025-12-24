@@ -57,10 +57,9 @@ def get_auth_service(request: Request) -> AuthService:
     return request.app.state.auth_service
 
 
-def get_db_session() -> Session:
-    """Get database session"""
-    db_manager = get_db()
-    return db_manager.get_dependency()
+def get_db_session():
+    """Database session dependency for FastAPI routes"""
+    yield from get_db().get_dependency()
 
 
 # === Routes ===
