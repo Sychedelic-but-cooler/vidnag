@@ -197,13 +197,13 @@ def get_file_size(file_path: str) -> int:
         raise FileOperationError(f"Failed to get file size: {e}")
 
 
-def safe_delete_file(file_path: str, storage_root: str = "/var/vidnag/storage") -> bool:
+def safe_delete_file(file_path: str, storage_root: str = "storage") -> bool:
     """
     Safely delete a file with security checks
 
     Args:
         file_path: Path to file to delete
-        storage_root: Root directory for storage (default: /var/vidnag/storage)
+        storage_root: Root directory for storage (default: storage)
 
     Returns:
         True if file was deleted, False if file didn't exist
@@ -238,13 +238,13 @@ def safe_delete_file(file_path: str, storage_root: str = "/var/vidnag/storage") 
         raise FileOperationError(f"Failed to delete file: {e}")
 
 
-def create_directory(dir_path: str, storage_root: str = "/var/vidnag/storage") -> None:
+def create_directory(dir_path: str, storage_root: str = "storage") -> None:
     """
     Create a directory with security checks
 
     Args:
         dir_path: Path to directory to create
-        storage_root: Root directory for storage (default: /var/vidnag/storage)
+        storage_root: Root directory for storage (default: storage)
 
     Raises:
         FileOperationError: If creation fails or security check fails

@@ -26,8 +26,8 @@
     "password": "odp8IHCrfIy3b92ffiDYgiyBBStE3ilpYyKWYMKecLxhXdxi73O7bZ00q4ZHRXsU"
   },
   "storage": {
-    "base_path": "/var/vidnag/storage",
-    "temp_path": "/var/vidnag/temp",
+    "base_path": "storage",
+    "temp_path": "storage/temp",
     "max_system_storage_gb": 100
   },
   "server": {
