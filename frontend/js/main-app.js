@@ -10,6 +10,13 @@ class VidnagApp {
         this.activeDownloads = new Map();
         this.activeConversions = new Map();
         this.pollInterval = null;
+
+        // WebSocket connection
+        this.ws = null;
+        this.wsReconnectAttempts = 0;
+        this.wsMaxReconnectAttempts = 5;
+        this.wsReconnectDelay = 2000;
+        this.wsKeepaliveInterval = null;
     }
 
     /**
@@ -31,6 +38,9 @@ class VidnagApp {
             // Set up event listeners
             this.setupEventListeners();
 
+            // Connect to WebSocket for real-time updates
+            this.connectWebSocket();
+
             // Load initial tab content
             this.loadTabContent(this.currentTab);
 
@@ -38,6 +48,142 @@ class VidnagApp {
         } catch (error) {
             console.error('Failed to initialize app:', error);
             this.showError('Failed to load application. Please try refreshing the page.');
+        }
+    }
+
+    /**
+     * Connect to WebSocket for real-time updates
+     */
+    connectWebSocket() {
+        // Close existing connection if any
+        if (this.ws) {
+            this.ws.close();
+        }
+
+        const token = API.getToken();
+        if (!token) {
+            console.error('No auth token for WebSocket connection');
+            return;
+        }
+
+        // Build WebSocket URL
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/downloads?token=${encodeURIComponent(token)}`;
+
+        console.log('Connecting to WebSocket...');
+
+        this.ws = new WebSocket(wsUrl);
+
+        this.ws.onopen = () => {
+            console.log('WebSocket connected');
+            this.wsReconnectAttempts = 0;
+
+            // Start keepalive ping
+            this.wsKeepaliveInterval = setInterval(() => {
+                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.send(JSON.stringify({ type: 'ping' }));
+                }
+            }, 30000); // Ping every 30 seconds
+        };
+
+        this.ws.onmessage = (event) => {
+            try {
+                const message = JSON.parse(event.data);
+                this.handleWebSocketMessage(message);
+            } catch (error) {
+                console.error('Error parsing WebSocket message:', error);
+            }
+        };
+
+        this.ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        this.ws.onclose = (event) => {
+            console.log('WebSocket disconnected:', event.code, event.reason);
+
+            // Clear keepalive
+            if (this.wsKeepaliveInterval) {
+                clearInterval(this.wsKeepaliveInterval);
+                this.wsKeepaliveInterval = null;
+            }
+
+            // Attempt to reconnect if not a normal closure
+            if (event.code !== 1000 && this.wsReconnectAttempts < this.wsMaxReconnectAttempts) {
+                this.wsReconnectAttempts++;
+                const delay = this.wsReconnectDelay * this.wsReconnectAttempts;
+                console.log(`Reconnecting in ${delay}ms (attempt ${this.wsReconnectAttempts}/${this.wsMaxReconnectAttempts})...`);
+
+                setTimeout(() => {
+                    this.connectWebSocket();
+                }, delay);
+            } else if (this.wsReconnectAttempts >= this.wsMaxReconnectAttempts) {
+                console.error('Max WebSocket reconnection attempts reached');
+                this.showError('Lost connection to server. Please refresh the page.');
+            }
+        };
+    }
+
+    /**
+     * Handle incoming WebSocket messages
+     */
+    handleWebSocketMessage(message) {
+        console.log('WebSocket message:', message);
+
+        if (message.type === 'pong') {
+            // Keepalive response
+            return;
+        }
+
+        if (message.type === 'download_progress') {
+            // Update active download
+            const jobId = message.job_id;
+
+            // Update or add to active downloads
+            this.activeDownloads.set(jobId, {
+                job_id: jobId,
+                video_id: message.video?.id,
+                status: message.status,
+                progress: message.progress || 0,
+                current_step: message.current_step || 'Processing...',
+                download_speed: message.download_speed,
+                download_eta: message.download_eta,
+                total_size: message.total_size,
+                video: message.video,
+                error_message: message.error_message
+            });
+
+            // Update UI
+            this.updateActiveDownloads();
+
+            // If download completed or failed, refresh video list
+            if (message.status === 'completed' || message.status === 'failed') {
+                // Remove from active downloads after a delay
+                setTimeout(() => {
+                    this.activeDownloads.delete(jobId);
+                    this.updateActiveDownloads();
+                }, 3000);
+
+                // Reload video list
+                if (this.currentTab === 'downloads') {
+                    this.loadDownloads();
+                }
+            }
+        }
+    }
+
+    /**
+     * Disconnect WebSocket
+     */
+    disconnectWebSocket() {
+        if (this.wsKeepaliveInterval) {
+            clearInterval(this.wsKeepaliveInterval);
+            this.wsKeepaliveInterval = null;
+        }
+
+        if (this.ws) {
+            this.ws.close(1000, 'Normal closure');
+            this.ws = null;
         }
     }
 
@@ -255,14 +401,13 @@ class VidnagApp {
                         current_step: job.current_step || 'Processing...',
                         download_speed: job.download_speed,
                         download_eta: job.download_eta,
-                        total_size: job.total_size
+                        total_size: job.total_size,
+                        video: job.video
                     });
                 }
 
-                // Start polling if we have active jobs
-                if (this.activeDownloads.size > 0) {
-                    this.startDownloadPolling();
-                }
+                // Update UI to show restored jobs
+                this.updateActiveDownloads();
 
                 console.log(`Restored ${response.jobs.length} active downloads`);
             }
@@ -308,8 +453,11 @@ class VidnagApp {
 
     /**
      * Update active downloads display
+     *
+     * With WebSocket, we just render what's in activeDownloads Map
+     * (no need to fetch from API since WebSocket keeps it updated)
      */
-    async updateActiveDownloads() {
+    updateActiveDownloads() {
         const activeContainer = document.getElementById('active-downloads');
         if (!activeContainer) return;
 
@@ -320,40 +468,16 @@ class VidnagApp {
             return;
         }
 
-        // Fetch status for real jobs, use placeholder data for temp jobs
-        const jobStatuses = await Promise.all(
-            activeJobs.map(async job => {
-                if (job.is_temp) {
-                    // Return temp job as-is
-                    return job;
-                }
-                // Fetch real job status
-                try {
-                    return await API.getDownloadStatus(job.job_id);
-                } catch (e) {
-                    console.error('Failed to fetch job status:', e);
-                    return null;
-                }
-            })
-        );
-
-        const html = jobStatuses
-            .filter(status => {
-                if (!status) return false;
+        // Render jobs from Map (updated by WebSocket)
+        const html = activeJobs
+            .filter(job => {
                 // Show temp jobs, pending jobs, and running jobs
-                return status.is_temp || status.status === 'running' || status.status === 'pending';
+                return job.is_temp || job.status === 'running' || job.status === 'pending';
             })
-            .map(status => this.renderActiveDownload(status))
+            .map(job => this.renderActiveDownload(job))
             .join('');
 
         activeContainer.innerHTML = html || '<p class="empty-state">No active downloads</p>';
-
-        // Remove completed/failed jobs from tracking (but not temp error jobs)
-        jobStatuses.forEach(status => {
-            if (status && !status.is_temp && (status.status === 'completed' || status.status === 'failed')) {
-                this.activeDownloads.delete(status.job_id);
-            }
-        });
     }
 
     /**
@@ -426,27 +550,6 @@ class VidnagApp {
     removeDownload(jobId) {
         this.activeDownloads.delete(jobId);
         this.updateActiveDownloads();
-    }
-
-    /**
-     * Start polling for download status updates
-     */
-    startDownloadPolling() {
-        // Clear existing interval
-        if (this.pollInterval) {
-            clearInterval(this.pollInterval);
-        }
-
-        // Poll every 2 seconds
-        this.pollInterval = setInterval(async () => {
-            if (this.activeDownloads.size > 0) {
-                await this.updateActiveDownloads();
-            } else {
-                // Stop polling if no active downloads
-                clearInterval(this.pollInterval);
-                this.pollInterval = null;
-            }
-        }, 2000);
     }
 
     /**
@@ -649,8 +752,7 @@ class VidnagApp {
             // Refresh the downloads view
             await this.loadDownloads();
 
-            // Start polling for status updates
-            this.startDownloadPolling();
+            // WebSocket will automatically receive progress updates
         }
 
         if (errorCount > 0 && successCount === 0) {

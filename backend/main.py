@@ -152,13 +152,23 @@ def create_app() -> FastAPI:
 
     logger.app.info(f"Loaded {len(plugin_manager.get_loaded_plugins())} plugins")
 
+    # === WEBSOCKET MANAGER ===
+    logger.app.info("Initializing WebSocket manager...")
+
+    from backend.core.websocket_manager import WebSocketManager
+
+    ws_manager = WebSocketManager()
+    app.state.ws_manager = ws_manager
+
+    logger.app.info("WebSocket manager initialized")
+
     # === DOWNLOAD SERVICE ===
     logger.app.info("Initializing download service...")
 
     from backend.workers.download_manager import DownloadManager
     from backend.services.video_download_service import VideoDownloadService
 
-    download_manager = DownloadManager(settings, db, logger)
+    download_manager = DownloadManager(settings, db, logger, ws_manager)
     download_service = VideoDownloadService(settings, db, download_manager, logger)
 
     app.state.download_manager = download_manager
@@ -174,6 +184,10 @@ def create_app() -> FastAPI:
     # Include video routes
     from backend.routes import videos
     app.include_router(videos.router)
+
+    # Include WebSocket routes
+    from backend.routes import websockets
+    app.include_router(websockets.router)
 
     logger.app.info("API routes registered")
 

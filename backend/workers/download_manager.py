@@ -16,7 +16,7 @@ from backend.workers.download_worker import DownloadWorker
 class DownloadManager:
     """Manages download job queue and worker thread pool"""
 
-    def __init__(self, settings_manager, db_manager, logger):
+    def __init__(self, settings_manager, db_manager, logger, ws_manager=None):
         """
         Initialize download manager
 
@@ -24,10 +24,12 @@ class DownloadManager:
             settings_manager: Settings manager instance
             db_manager: Database manager instance
             logger: Logger instance
+            ws_manager: WebSocket manager for real-time updates (optional)
         """
         self.settings = settings_manager
         self.db = db_manager
         self.logger = logger
+        self.ws_manager = ws_manager
 
         # Get max workers from settings
         from backend.core.settings import SettingsLevel
@@ -51,8 +53,8 @@ class DownloadManager:
         self.shutdown_flag = threading.Event()
         self.shutdown_requested = False
 
-        # Initialize worker
-        self.worker = DownloadWorker(db_manager, settings_manager, logger)
+        # Initialize worker with WebSocket manager
+        self.worker = DownloadWorker(db_manager, settings_manager, logger, ws_manager)
 
         # Start background polling thread
         self.poller_thread = threading.Thread(

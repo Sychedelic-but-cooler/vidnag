@@ -24,7 +24,7 @@ from backend.models import Video, ProcessingJob
 class DownloadWorker:
     """Executes individual video downloads"""
 
-    def __init__(self, db_manager, settings_manager, logger):
+    def __init__(self, db_manager, settings_manager, logger, ws_manager=None):
         """
         Initialize download worker
 
@@ -32,10 +32,12 @@ class DownloadWorker:
             db_manager: Database manager for session handling
             settings_manager: Settings manager for configuration
             logger: Logger instance
+            ws_manager: WebSocket manager for real-time updates (optional)
         """
         self.db = db_manager
         self.settings = settings_manager
         self.logger = logger
+        self.ws_manager = ws_manager
 
     def execute_download(self, job_id: int) -> bool:
         """
@@ -419,6 +421,36 @@ class DownloadWorker:
                             job.output_params['total_size'] = total_size
 
                     session.commit()
+
+                    # Send WebSocket update
+                    if self.ws_manager and job.user_id:
+                        # Get video info if available
+                        video_info = None
+                        if job.video_id:
+                            video = session.query(Video).filter(Video.id == job.video_id).first()
+                            if video:
+                                video_info = {
+                                    'id': video.id,
+                                    'title': video.title,
+                                    'status': video.status
+                                }
+
+                        # Send WebSocket message
+                        self.ws_manager.broadcast_to_user_sync(
+                            user_id=job.user_id,
+                            message={
+                                'type': 'download_progress',
+                                'job_id': job.id,
+                                'status': job.status,
+                                'progress': job.progress,
+                                'current_step': job.current_step,
+                                'download_speed': download_speed,
+                                'download_eta': download_eta,
+                                'total_size': total_size,
+                                'video': video_info,
+                                'error_message': job.error_message
+                            }
+                        )
         except Exception as e:
             self.logger.app.error(f"Failed to update job progress: {e}")
 
