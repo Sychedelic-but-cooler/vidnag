@@ -1,0 +1,183 @@
+/**
+ * Theme Switcher Component
+ * Floating button to change themes and colors
+ */
+
+.theme-switcher {
+    position: fixed;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    z-index: var(--z-dropdown);
+}
+
+.theme-toggle-btn {
+    background: var(--surface);
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-full);
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition-fast);
+    color: var(--text-primary);
+    font-size: 24px;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-xl);
+}
+
+.theme-menu {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    box-shadow: var(--shadow-xl);
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all var(--transition-fast);
+}
+
+.theme-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.theme-menu h3 {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.theme-options {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.theme-option {
+    flex: 1;
+    padding: var(--space-sm);
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    cursor: pointer;
+    text-align: center;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+}
+
+.theme-option:hover {
+    background: var(--bg-hover);
+    border-color: var(--color-primary);
+}
+
+.theme-option.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.color-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+}
+
+.color-option {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-md);
+}
+
+.color-option.active {
+    border-color: var(--text-primary);
+    box-shadow: var(--shadow-lg);
+}
+
+.color-option.active::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: var(--font-bold);
+    font-size: var(--text-sm);
+}
+
+/* Color swatches */
+.color-option[data-color="blue"] {
+    background: linear-gradient(135deg, #0066cc, #6c5ce7);
+}
+
+.color-option[data-color="green"] {
+    background: linear-gradient(135deg, #00875a, #00a569);
+}
+
+.color-option[data-color="purple"] {
+    background: linear-gradient(135deg, #6b46c1, #9333ea);
+}
+
+.color-option[data-color="red"] {
+    background: linear-gradient(135deg, #dc2626, #f97316);
+}
+
+.color-option[data-color="orange"] {
+    background: linear-gradient(135deg, #ea580c, #f59e0b);
+}
+
+.color-option[data-color="teal"] {
+    background: linear-gradient(135deg, #0d9488, #06b6d4);
+}
+
+.color-option[data-color="pink"] {
+    background: linear-gradient(135deg, #db2777, #a855f7);
+}
+
+@media (max-width: 600px) {
+    .theme-switcher {
+        bottom: var(--space-md);
+        right: var(--space-md);
+    }
+
+    .theme-toggle-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .theme-menu {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+    }
+
+    .theme-menu.show {
+        transform: translateX(-50%) translateY(0);
+    }
+}

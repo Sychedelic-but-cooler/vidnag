@@ -1,4 +1,4 @@
-/* Vidnag Auth Pages Styles */
+/* Vidnag Auth Pages Styles - Theme-aware */
 
 * {
     margin: 0;
@@ -7,13 +7,14 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: var(--font-sans);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: var(--space-lg);
+    transition: background var(--transition-base);
 }
 
 .container {
@@ -22,42 +23,45 @@ body {
 }
 
 .auth-box {
-    background: white;
-    border-radius: 12px;
-    padding: 40px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3xl);
+    box-shadow: var(--shadow-xl);
+    transition: background var(--transition-base);
 }
 
 .auth-box h1 {
     text-align: center;
-    color: #667eea;
-    font-size: 32px;
-    margin-bottom: 8px;
+    color: var(--color-primary);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-xs);
 }
 
 .subtitle {
     text-align: center;
-    color: #6b7280;
-    margin-bottom: 32px;
-    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2xl);
+    font-size: var(--text-sm);
 }
 
 h2 {
-    color: #1f2937;
-    margin-bottom: 24px;
-    font-size: 24px;
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-semibold);
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: var(--space-lg);
 }
 
 label {
     display: block;
-    margin-bottom: 8px;
-    color: #374151;
-    font-weight: 500;
-    font-size: 14px;
+    margin-bottom: var(--space-sm);
+    color: var(--text-secondary);
+    font-weight: var(--font-medium);
+    font-size: var(--text-sm);
 }
 
 input[type="text"],
@@ -65,70 +69,74 @@ input[type="email"],
 input[type="password"] {
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: border-color 0.2s;
+    border: 2px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--color-primary);
 }
 
 .btn {
     width: 100%;
     padding: 12px 24px;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(var(--color-primary-rgb, 102, 126, 234), 0.4);
+    opacity: var(--opacity-hover);
 }
 
 .btn-secondary {
-    background: #6b7280;
+    background: var(--text-tertiary);
     color: white;
 }
 
 .btn-secondary:hover {
-    background: #4b5563;
+    background: var(--text-secondary);
 }
 
 .btn-danger {
-    background: #ef4444;
+    background: var(--color-error);
     color: white;
 }
 
 .btn-danger:hover {
-    background: #dc2626;
+    background: var(--color-error);
+    opacity: var(--opacity-hover);
 }
 
 .toggle {
-    margin-top: 24px;
+    margin-top: var(--space-lg);
     text-align: center;
-    color: #6b7280;
-    font-size: 14px;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
 }
 
 .toggle a {
-    color: #667eea;
+    color: var(--color-primary);
     text-decoration: none;
-    font-weight: 600;
-    margin-left: 4px;
+    font-weight: var(--font-semibold);
+    margin-left: var(--space-xs);
 }
 
 .toggle a:hover {
@@ -137,39 +145,41 @@ input[type="password"]:focus {
 
 .error {
     background: #fee2e2;
-    border: 1px solid #ef4444;
+    border: 1px solid var(--color-error);
     color: #991b1b;
     padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 14px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-sm);
 }
 
 .success {
     background: #d1fae5;
-    border: 1px solid #10b981;
+    border: 1px solid var(--color-success);
     color: #065f46;
     padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 14px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-lg);
+    font-size: var(--text-sm);
 }
 
 .user-info {
-    background: white;
-    border-radius: 12px;
-    padding: 40px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3xl);
+    box-shadow: var(--shadow-xl);
+    margin-top: var(--space-lg);
+    transition: background var(--transition-base);
 }
 
 .info-grid {
-    margin: 24px 0;
+    margin: var(--space-lg) 0;
 }
 
 .info-item {
     padding: 12px 0;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-primary);
+    transition: border-color var(--transition-base);
 }
 
 .info-item:last-child {
@@ -177,26 +187,26 @@ input[type="password"]:focus {
 }
 
 .info-item strong {
-    color: #6b7280;
-    font-size: 14px;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
 }
 
 .info-item span {
-    color: #1f2937;
-    font-size: 14px;
-    margin-left: 8px;
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    margin-left: var(--space-sm);
 }
 
 .button-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 24px;
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
 }
 
 @media (max-width: 600px) {
     .auth-box {
-        padding: 24px;
+        padding: var(--space-lg);
     }
 
     .button-group {
