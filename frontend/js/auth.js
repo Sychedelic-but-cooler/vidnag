@@ -225,8 +225,10 @@ loginForm.addEventListener('submit', async (e) => {
 
     try {
         const user = await login(username, password);
-        showSuccess('Login successful!');
-        setTimeout(() => showUserInfo(user), 500);
+        showSuccess('Login successful! Redirecting...');
+        setTimeout(() => {
+            window.location.href = '/app';
+        }, 500);
     } catch (error) {
         showError(error.message);
     }
@@ -242,8 +244,10 @@ registerForm.addEventListener('submit', async (e) => {
 
     try {
         const user = await register(username, email, password);
-        showSuccess('Registration successful!');
-        setTimeout(() => showUserInfo(user), 500);
+        showSuccess('Registration successful! Redirecting...');
+        setTimeout(() => {
+            window.location.href = '/app';
+        }, 500);
     } catch (error) {
         showError(error.message);
     }
@@ -275,12 +279,14 @@ async function init() {
     if (hasToken()) {
         try {
             const user = await getCurrentUser();
-            showUserInfo(user);
+            // Already logged in, redirect to app
+            window.location.href = '/app';
         } catch (error) {
             // Token expired or invalid, try refresh
             try {
                 const user = await refreshAccessToken();
-                showUserInfo(user);
+                // Refresh successful, redirect to app
+                window.location.href = '/app';
             } catch (refreshError) {
                 // Refresh failed, clear tokens and show login
                 clearTokens();

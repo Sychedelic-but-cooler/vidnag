@@ -179,6 +179,7 @@ class AuthPlugin(MiddlewarePlugin):
             '/docs',
             '/openapi.json',
             '/',
+            '/app',
             '/static/*',
             '/favicon.ico'
         ])

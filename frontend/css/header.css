@@ -1,0 +1,204 @@
+/**
+ * Vidnag Header Component
+ * Glassmorphic top bar with brand and actions
+ */
+
+/* ============================================================
+   MAIN HEADER
+   ============================================================ */
+
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    backdrop-filter: var(--glass-blur-strong);
+    -webkit-backdrop-filter: var(--glass-blur-strong);
+    background: var(--glass-bg-strong);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+}
+
+/* ============================================================
+   HEADER LEFT - Brand & Welcome
+   ============================================================ */
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.brand-name {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-primary);
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(var(--color-primary-rgb, 102, 126, 234), 0.3);
+    letter-spacing: -0.5px;
+}
+
+.welcome-text {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin: 0;
+    font-weight: var(--font-medium);
+}
+
+#username-display {
+    color: var(--text-primary);
+    font-weight: var(--font-semibold);
+}
+
+/* ============================================================
+   HEADER RIGHT - Action Buttons
+   ============================================================ */
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.header-right .glass-btn-icon {
+    position: relative;
+    transition: all var(--transition-fast);
+}
+
+.header-right .glass-btn-icon:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: var(--glass-shadow), var(--glass-glow);
+}
+
+.header-right .glass-btn-icon span {
+    font-size: 1.25rem;
+}
+
+.header-right .glass-btn {
+    padding: var(--space-sm) var(--space-md);
+}
+
+.header-right a.glass-btn-icon {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================================
+   LOGOUT BUTTON
+   ============================================================ */
+
+#logout-btn {
+    background: var(--glass-bg-strong);
+    border-color: var(--glass-border-strong);
+    color: var(--text-primary);
+    font-weight: var(--font-semibold);
+}
+
+#logout-btn:hover {
+    background: var(--color-error);
+    border-color: var(--color-error);
+    color: white;
+    box-shadow: var(--glass-shadow), 0 0 20px rgba(220, 38, 38, 0.4);
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .main-header {
+        padding: var(--space-sm) var(--space-md);
+    }
+
+    .brand-name {
+        font-size: var(--text-xl);
+    }
+
+    .welcome-text {
+        font-size: var(--text-xs);
+    }
+
+    .header-right {
+        gap: var(--space-xs);
+    }
+
+    .header-right .glass-btn-icon {
+        width: 36px;
+        height: 36px;
+        padding: var(--space-xs);
+    }
+
+    .header-right .glass-btn-icon span {
+        font-size: 1.1rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .main-header {
+        padding: var(--space-xs) var(--space-sm);
+    }
+
+    .header-left {
+        gap: 2px;
+    }
+
+    .brand-name {
+        font-size: var(--text-lg);
+    }
+
+    .welcome-text {
+        display: none; /* Hide welcome text on very small screens */
+    }
+
+    .header-right .glass-btn {
+        padding: var(--space-xs) var(--space-sm);
+        font-size: var(--text-sm);
+    }
+
+    .header-right .glass-btn-icon {
+        width: 32px;
+        height: 32px;
+        padding: var(--space-xs);
+    }
+
+    .header-right .glass-btn-icon span {
+        font-size: 1rem;
+    }
+
+    /* Show only icons on mobile - hide text */
+    #logout-btn {
+        padding: var(--space-xs);
+        width: 32px;
+        height: 32px;
+        font-size: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #logout-btn::before {
+        content: '🚪';
+        font-size: 1rem;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .header-right {
+        gap: 4px;
+    }
+
+    /* Hide help link on very small screens */
+    .header-right a.glass-btn-icon[title="Help"] {
+        display: none;
+    }
+}

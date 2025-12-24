@@ -1,0 +1,210 @@
+/**
+ * Vidnag Tab Navigation
+ * Glassmorphic tab bar below header
+ */
+
+/* ============================================================
+   TAB NAVIGATION
+   ============================================================ */
+
+.tab-navigation {
+    position: fixed;
+    top: 70px; /* Below header */
+    left: 0;
+    right: 0;
+    z-index: 90;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    background: var(--glass-bg);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+}
+
+/* ============================================================
+   TAB BUTTONS
+   ============================================================ */
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: var(--text-base);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+    position: relative;
+}
+
+.tab-btn:hover {
+    background: var(--glass-bg-strong);
+    border-color: var(--glass-border-strong);
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow);
+}
+
+.tab-btn:active {
+    transform: translateY(0);
+}
+
+/* Active Tab */
+.tab-btn.active {
+    background: var(--glass-bg-stronger);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: var(--glass-shadow), var(--glass-glow);
+    font-weight: var(--font-semibold);
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+}
+
+/* Tab Icon */
+.tab-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.tab-btn.active .tab-icon {
+    filter: drop-shadow(0 0 8px rgba(var(--color-primary-rgb, 102, 126, 234), 0.5));
+}
+
+/* Tab Label */
+.tab-label {
+    font-size: var(--text-base);
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .tab-navigation {
+        top: 60px;
+        padding: var(--space-xs) var(--space-md);
+        gap: var(--space-xs);
+    }
+
+    .tab-btn {
+        padding: var(--space-xs) var(--space-md);
+        font-size: var(--text-sm);
+    }
+
+    .tab-icon {
+        font-size: 1.1rem;
+    }
+
+    .tab-label {
+        font-size: var(--text-sm);
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .tab-navigation {
+        top: 56px;
+        padding: var(--space-xs) var(--space-sm);
+        gap: var(--space-xs);
+        justify-content: flex-start;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .tab-navigation::-webkit-scrollbar {
+        display: none; /* Chrome, Safari */
+    }
+
+    .tab-btn {
+        padding: var(--space-xs) var(--space-sm);
+        flex-shrink: 0;
+    }
+
+    .tab-label {
+        display: none; /* Show icons only on mobile */
+    }
+
+    .tab-btn {
+        min-width: 48px;
+        justify-content: center;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .tab-navigation {
+        gap: 4px;
+    }
+
+    .tab-btn {
+        padding: var(--space-xs);
+        min-width: 44px;
+    }
+
+    .tab-icon {
+        font-size: 1rem;
+    }
+}
+
+/* ============================================================
+   TAB TRANSITION EFFECTS
+   ============================================================ */
+
+.tab-btn {
+    overflow: hidden;
+}
+
+.tab-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(
+        circle,
+        rgba(var(--color-primary-rgb, 102, 126, 234), 0.2) 0%,
+        transparent 70%
+    );
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    border-radius: var(--radius-full);
+    pointer-events: none;
+}
+
+.tab-btn:hover::before {
+    width: 200px;
+    height: 200px;
+}
+
+.tab-btn.active::before {
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(
+        circle,
+        rgba(var(--color-primary-rgb, 102, 126, 234), 0.15) 0%,
+        transparent 70%
+    );
+}

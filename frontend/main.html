@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vidnag - Video Platform</title>
+
+    <!-- Theme System - Load first -->
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/glass.css">
+    <link rel="stylesheet" href="/static/css/main-layout.css">
+    <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/tabs.css">
+    <link rel="stylesheet" href="/static/css/content.css">
+    <link rel="stylesheet" href="/static/css/theme-switcher.css">
+
+    <!-- Theme Manager - Load early to prevent flash -->
+    <script src="/static/js/theme.js"></script>
+</head>
+<body>
+    <!-- Gradient Background -->
+    <div class="gradient-bg"></div>
+
+    <!-- Top Bar / Header -->
+    <header class="main-header glass">
+        <div class="header-left">
+            <h1 class="brand-name">Vidnag</h1>
+            <p class="welcome-text">Welcome back, <span id="username-display">User</span>!</p>
+        </div>
+
+        <div class="header-right">
+            <button class="glass-btn-icon" id="profile-btn" title="Profile" aria-label="Profile">
+                <span>👤</span>
+            </button>
+
+            <button class="glass-btn-icon" id="settings-btn" title="Settings" aria-label="Settings">
+                <span>⚙️</span>
+            </button>
+
+            <!-- Admin button - shown only if user is admin -->
+            <button class="glass-btn-icon" id="admin-btn" title="Admin Portal" aria-label="Admin Portal" style="display: none;">
+                <span>🛡️</span>
+            </button>
+
+            <a href="https://github.com/anthropics/vidnag" target="_blank" class="glass-btn-icon" title="Help" aria-label="Help">
+                <span>❓</span>
+            </a>
+
+            <button class="glass-btn-icon" id="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+                <span>🎨</span>
+            </button>
+
+            <button class="glass-btn" id="logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-navigation glass">
+        <button class="tab-btn active" data-tab="downloads">
+            <span class="tab-icon">📥</span>
+            <span class="tab-label">Video Downloads</span>
+        </button>
+
+        <button class="tab-btn" data-tab="tools">
+            <span class="tab-icon">🛠️</span>
+            <span class="tab-label">Media Tools</span>
+        </button>
+
+        <button class="tab-btn" data-tab="browser">
+            <span class="tab-icon">📁</span>
+            <span class="tab-label">File Browser</span>
+        </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Tab 1: Video Downloads -->
+        <section id="tab-downloads" class="tab-content active">
+            <div class="split-layout">
+                <!-- Left Panel (30%) -->
+                <aside class="left-panel">
+                    <!-- URL Input -->
+                    <div class="glass-card">
+                        <h3 class="glass-card-title">Add Downloads</h3>
+                        <div class="form-group">
+                            <label for="url-input">Enter video URLs (one per line)</label>
+                            <textarea
+                                id="url-input"
+                                class="glass-textarea"
+                                rows="6"
+                                placeholder="https://youtube.com/watch?v=...&#10;https://vimeo.com/..."
+                            ></textarea>
+                        </div>
+                        <button class="glass-btn-primary" id="download-btn">
+                            <span>📥</span> Download
+                        </button>
+                    </div>
+
+                    <!-- Active Downloads -->
+                    <div class="glass-card">
+                        <h3 class="glass-card-title">Active Downloads</h3>
+                        <div id="active-downloads" class="active-downloads-list">
+                            <p class="empty-state">No active downloads</p>
+                        </div>
+                    </div>
+
+                    <!-- Queue -->
+                    <div class="glass-card">
+                        <h3 class="glass-card-title">Queue <span id="queue-count" class="glass-badge">0</span></h3>
+                        <div id="queue-list" class="queue-list">
+                            <p class="empty-state">Queue is empty</p>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right Panel (70%) -->
+                <section class="right-panel">
+                    <div class="glass-card">
+                        <div class="glass-card-header">
+                            <h3 class="glass-card-title">Download History</h3>
+                            <div class="filter-controls">
+                                <input
+                                    type="search"
+                                    id="history-search"
+                                    class="glass-input"
+                                    placeholder="Search downloads..."
+                                >
+                                <select id="history-filter" class="glass-select">
+                                    <option value="all">All</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="failed">Failed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="download-history" class="download-history glass-scrollbar">
+                            <p class="empty-state">No downloads yet</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <!-- Tab 2: Media Tools -->
+        <section id="tab-tools" class="tab-content">
+            <div class="split-layout">
+                <!-- Left Panel (30%) -->
+                <aside class="left-panel">
+                    <!-- Tool Selection -->
+                    <div class="glass-card">
+                        <h3 class="glass-card-title">Select Tool</h3>
+                        <select id="tool-selector" class="glass-select">
+                            <option value="video-converter">Video Converter</option>
+                            <option value="audio-converter">Audio Converter</option>
+                            <option value="video-trimmer">Video Trimmer</option>
+                            <option value="audio-extractor">Audio Extractor</option>
+                            <option value="compressor">Compressor</option>
+                            <option value="resolution-changer">Resolution Changer</option>
+                        </select>
+                    </div>
+
+                    <!-- Dynamic Tool Options -->
+                    <div class="glass-card">
+                        <h3 class="glass-card-title">Tool Options</h3>
+                        <div id="tool-options" class="tool-options">
+                            <!-- Content will be dynamically loaded based on selected tool -->
+                            <p class="empty-state">Select a tool to configure options</p>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right Panel (70%) -->
+                <section class="right-panel">
+                    <!-- Completed Conversions -->
+                    <div class="glass-card">
+                        <h3 class="glass-card-title">Completed Conversions</h3>
+                        <div id="completed-conversions" class="completed-list glass-scrollbar">
+                            <p class="empty-state">No completed conversions</p>
+                        </div>
+                    </div>
+
+                    <!-- Active & Queued -->
+                    <div class="glass-card">
+                        <h3 class="glass-card-title">Active & Queued</h3>
+                        <div id="active-conversions" class="active-conversions">
+                            <p class="empty-state">No active conversions</p>
+                        </div>
+                        <hr class="glass-divider">
+                        <div id="queued-conversions" class="queued-conversions">
+                            <h4>Queue <span id="conversion-queue-count" class="glass-badge">0</span></h4>
+                            <p class="empty-state">Queue is empty</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <!-- Tab 3: File Browser -->
+        <section id="tab-browser" class="tab-content">
+            <div class="full-layout">
+                <!-- Upload Section -->
+                <div class="glass-card upload-section">
+                    <div class="upload-zone" id="upload-zone">
+                        <div class="upload-icon">📤</div>
+                        <p class="upload-text">Drag & Drop files here or</p>
+                        <button class="glass-btn-primary" id="choose-files-btn">Choose Files</button>
+                        <input type="file" id="file-input" multiple accept="video/*,audio/*" style="display: none;">
+                        <p class="upload-hint">Accepted formats: MP4, WebM, AVI, MKV, MOV, MP3, WAV, FLAC, AAC, OGG</p>
+                    </div>
+                    <div id="upload-progress" class="upload-progress" style="display: none;">
+                        <!-- Upload progress indicators will appear here -->
+                    </div>
+                </div>
+
+                <!-- File Browser -->
+                <div class="glass-card">
+                    <div class="glass-card-header">
+                        <h3 class="glass-card-title">Your Files</h3>
+                        <div class="file-controls">
+                            <select id="sort-by" class="glass-select">
+                                <option value="name">Sort by: Name</option>
+                                <option value="size">Sort by: Size</option>
+                                <option value="date">Sort by: Date</option>
+                                <option value="type">Sort by: Type</option>
+                            </select>
+                            <select id="filter-by" class="glass-select">
+                                <option value="all">Filter: All</option>
+                                <option value="video">Video only</option>
+                                <option value="audio">Audio only</option>
+                            </select>
+                            <input
+                                type="search"
+                                id="file-search"
+                                class="glass-input"
+                                placeholder="Search files..."
+                            >
+                        </div>
+                    </div>
+
+                    <div class="file-browser glass-scrollbar">
+                        <table class="file-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select-all"></th>
+                                    <th>Name</th>
+                                    <th>Size</th>
+                                    <th>Type</th>
+                                    <th>Modified</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="file-list">
+                                <tr>
+                                    <td colspan="6" class="empty-state">No files yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/main-app.js"></script>
+    <script src="/static/js/theme-switcher-component.js"></script>
+</body>
+</html>

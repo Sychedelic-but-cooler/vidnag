@@ -1,0 +1,262 @@
+/**
+ * Vidnag Main Layout
+ * Overall page structure and gradient background
+ */
+
+/* ============================================================
+   GLOBAL LAYOUT
+   ============================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ============================================================
+   GRADIENT BACKGROUND
+   ============================================================ */
+
+.gradient-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: linear-gradient(
+        135deg,
+        var(--color-primary) 0%,
+        var(--color-secondary) 50%,
+        var(--color-primary-light) 100%
+    );
+    background-size: 200% 200%;
+    animation: gradientShift 15s ease infinite;
+    opacity: 0.15;
+}
+
+[data-theme="dark"] .gradient-bg {
+    opacity: 0.25;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+
+.main-content {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: var(--space-lg);
+    padding-top: calc(var(--space-lg) + 140px); /* Account for header + tabs */
+}
+
+/* ============================================================
+   LAYOUT PATTERNS
+   ============================================================ */
+
+/* 30/70 Split Layout */
+.split-layout {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    gap: var(--space-lg);
+    width: 100%;
+}
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+/* Full Width Layout */
+.full-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    width: 100%;
+}
+
+/* ============================================================
+   TAB CONTENT
+   ============================================================ */
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================
+   EMPTY STATES
+   ============================================================ */
+
+.empty-state {
+    text-align: center;
+    color: var(--text-tertiary);
+    padding: var(--space-lg);
+    font-size: var(--text-sm);
+}
+
+/* ============================================================
+   FORM ELEMENTS
+   ============================================================ */
+
+.form-group {
+    margin-bottom: var(--space-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+}
+
+/* ============================================================
+   FILTER CONTROLS
+   ============================================================ */
+
+.filter-controls {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.filter-controls .glass-input {
+    flex: 1;
+}
+
+.filter-controls .glass-select {
+    min-width: 150px;
+}
+
+.file-controls {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.file-controls .glass-select {
+    min-width: 150px;
+}
+
+.file-controls .glass-input {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .split-layout {
+        grid-template-columns: 35% 65%;
+    }
+
+    .main-content {
+        padding: var(--space-md);
+        padding-top: calc(var(--space-md) + 130px);
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .split-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .main-content {
+        padding: var(--space-sm);
+        padding-top: calc(var(--space-sm) + 120px);
+    }
+
+    .filter-controls,
+    .file-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-controls .glass-input,
+    .filter-controls .glass-select,
+    .file-controls .glass-input,
+    .file-controls .glass-select {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+/* ============================================================
+   SCROLLBAR STYLING
+   ============================================================ */
+
+.glass-scrollbar {
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+.glass-scrollbar::-webkit-scrollbar {
+    width: 10px;
+}
+
+.glass-scrollbar::-webkit-scrollbar-track {
+    background: var(--glass-bg);
+    border-radius: var(--radius-sm);
+}
+
+.glass-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--glass-bg-stronger);
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.glass-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+    background-clip: content-box;
+}

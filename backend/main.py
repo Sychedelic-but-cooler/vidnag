@@ -147,6 +147,18 @@ def create_app() -> FastAPI:
                 "status": "running"
             }
 
+    @app.get("/app")
+    async def main_app():
+        """Main application page - requires authentication"""
+        main_page = Path(__file__).parent.parent / "frontend" / "main.html"
+        if main_page.exists():
+            return FileResponse(main_page)
+        else:
+            return JSONResponse(
+                status_code=404,
+                content={"error": "Main application page not found"}
+            )
+
     @app.get("/health")
     async def health(request: Request):
         """Health check endpoint"""
