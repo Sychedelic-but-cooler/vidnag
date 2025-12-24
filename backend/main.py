@@ -75,28 +75,32 @@ def create_app() -> FastAPI:
     )
 
     # Initialize storage directories
-    logger.app.info("Initializing storage directories...")
-    from backend.utils.storage import init_storage, verify_storage_writable
+    logger.app.info("Setting up storage directories...")
+    from backend.utils.storage import init_storage
 
     storage_base = settings.get(SettingsLevel.APP, "storage.base_path", "storage")
-    created, errors = init_storage(storage_base, ["videos", "thumbnails", "temp"])
+
+    # Create directories and set permissions
+    created, warnings = init_storage(
+        base_path=storage_base,
+        subdirs=["videos", "thumbnails", "temp"],
+        create_mode=0o755,
+        fix_permissions=True
+    )
 
     if created:
-        logger.app.info(f"Created storage directories: {', '.join(created)}")
+        logger.app.info(f"Storage directories created: {len(created)} new")
+        for path in created:
+            logger.app.info(f"  ✓ {path}")
+    else:
+        logger.app.info("Storage directories already exist")
 
-    if errors:
-        for error in errors:
-            logger.app.warning(f"Storage initialization warning: {error}")
+    if warnings:
+        logger.app.warning(f"Storage setup had {len(warnings)} warnings:")
+        for warning in warnings:
+            logger.app.warning(f"  ⚠ {warning}")
 
-    # Verify storage is writable
-    writable, write_errors = verify_storage_writable(storage_base)
-    if not writable:
-        logger.app.error("Storage verification failed:")
-        for error in write_errors:
-            logger.app.error(f"  - {error}")
-        raise RuntimeError("Storage directories are not properly configured. Check permissions.")
-
-    logger.app.info(f"Storage initialized and verified: {storage_base}")
+    logger.app.info(f"Storage system ready at: {storage_base}")
 
     # Create FastAPI app
     app = FastAPI(

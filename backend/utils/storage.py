@@ -17,25 +17,28 @@ class StorageError(Exception):
 def init_storage(
     base_path: str = "storage",
     subdirs: List[str] = None,
-    create_mode: int = 0o755
-) -> None:
+    create_mode: int = 0o755,
+    fix_permissions: bool = True
+) -> Tuple[List[str], List[str]]:
     """
     Initialize storage directories with proper permissions
 
-    Creates all necessary storage directories if they don't exist
-    and sets appropriate permissions for the application.
+    Aggressively creates all necessary storage directories and sets
+    proper permissions. This runs on every application startup to ensure
+    the storage system is properly configured.
 
     Args:
         base_path: Base storage directory path (default: "storage")
         subdirs: List of subdirectories to create (default: ["videos", "thumbnails", "temp"])
-        create_mode: Unix permissions for created directories (default: 0o755)
+        create_mode: Unix permissions for directories (default: 0o755 = rwxr-xr-x)
+        fix_permissions: Whether to fix permissions on existing directories (default: True)
 
-    Raises:
-        StorageError: If directory creation or permission setting fails
+    Returns:
+        Tuple of (created_paths: List[str], warnings: List[str])
 
     Example:
-        >>> init_storage("storage", ["videos", "thumbnails", "temp"])
-        # Creates storage/videos, storage/thumbnails, storage/temp
+        >>> created, warnings = init_storage("storage", ["videos", "thumbnails", "temp"])
+        >>> print(f"Created: {len(created)} directories")
     """
     if subdirs is None:
         subdirs = ["videos", "thumbnails", "temp"]
@@ -51,32 +54,60 @@ def init_storage(
     directories_to_create.extend([base_path_obj / subdir for subdir in subdirs])
 
     created = []
-    errors = []
+    warnings = []
 
     for directory in directories_to_create:
+        dir_path = str(directory)
+
         try:
             # Create directory if it doesn't exist
             if not directory.exists():
                 directory.mkdir(parents=True, mode=create_mode, exist_ok=True)
-                created.append(str(directory))
+                created.append(dir_path)
 
-            # Check if directory is writable
+                # Verify it was created
+                if not directory.exists():
+                    warnings.append(f"Directory creation reported success but path doesn't exist: {dir_path}")
+                    continue
+
+            # Fix permissions on existing directories if requested
+            if fix_permissions:
+                try:
+                    current_mode = directory.stat().st_mode
+                    current_perms = stat.S_IMODE(current_mode)
+
+                    if current_perms != create_mode:
+                        directory.chmod(create_mode)
+                        # Verify permission change
+                        new_mode = directory.stat().st_mode
+                        if stat.S_IMODE(new_mode) != create_mode:
+                            warnings.append(
+                                f"Failed to set permissions on {dir_path}: "
+                                f"wanted {oct(create_mode)}, got {oct(stat.S_IMODE(new_mode))}"
+                            )
+                except (OSError, PermissionError) as e:
+                    warnings.append(f"Could not set permissions on {dir_path}: {e}")
+
+            # Final writability check
             if not os.access(directory, os.W_OK):
-                errors.append(f"Directory not writable: {directory}")
+                warnings.append(f"Directory exists but is not writable: {dir_path}")
+            else:
+                # Create .gitkeep file to preserve empty directories in git
+                gitkeep = directory / ".gitkeep"
+                if not gitkeep.exists():
+                    try:
+                        gitkeep.touch()
+                    except Exception as e:
+                        warnings.append(f"Could not create .gitkeep in {dir_path}: {e}")
 
-            # Ensure proper permissions
-            try:
-                current_mode = directory.stat().st_mode
-                if stat.S_IMODE(current_mode) != create_mode:
-                    directory.chmod(create_mode)
-            except (OSError, PermissionError) as e:
-                # Log warning but don't fail - we'll check writability below
-                errors.append(f"Could not set permissions for {directory}: {e}")
+        except PermissionError as e:
+            warnings.append(f"Permission denied creating {dir_path}: {e}")
+        except OSError as e:
+            warnings.append(f"OS error creating {dir_path}: {e}")
+        except Exception as e:
+            warnings.append(f"Unexpected error with {dir_path}: {e}")
 
-        except (OSError, PermissionError) as e:
-            errors.append(f"Failed to create {directory}: {e}")
-
-    return created, errors
+    return created, warnings
 
 
 def get_storage_info(base_path: str = "storage") -> dict:
