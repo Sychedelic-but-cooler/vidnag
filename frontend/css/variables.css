@@ -167,11 +167,13 @@
     --color-primary-hover: #0052a3;
     --color-primary-light: #3385d6;
     --color-primary-dark: #004080;
+    --color-primary-rgb: 0, 102, 204;
 
     --color-secondary: #6c5ce7;
     --color-secondary-hover: #5f4dd4;
     --color-secondary-light: #8b7def;
     --color-secondary-dark: #4834d4;
+    --color-secondary-rgb: 108, 92, 231;
 }
 
 /* Green Theme */
@@ -180,11 +182,13 @@
     --color-primary-hover: #006644;
     --color-primary-light: #36b37e;
     --color-primary-dark: #005238;
+    --color-primary-rgb: 0, 135, 90;
 
     --color-secondary: #00a569;
     --color-secondary-hover: #008756;
     --color-secondary-light: #36c387;
     --color-secondary-dark: #007848;
+    --color-secondary-rgb: 0, 165, 105;
 }
 
 /* Purple Theme */
@@ -193,11 +197,13 @@
     --color-primary-hover: #553c9a;
     --color-primary-light: #8b5cf6;
     --color-primary-dark: #4c1d95;
+    --color-primary-rgb: 107, 70, 193;
 
     --color-secondary: #9333ea;
     --color-secondary-hover: #7c3aed;
     --color-secondary-light: #a855f7;
     --color-secondary-dark: #6b21a8;
+    --color-secondary-rgb: 147, 51, 234;
 }
 
 /* Red Theme */
@@ -206,11 +212,13 @@
     --color-primary-hover: #b91c1c;
     --color-primary-light: #ef4444;
     --color-primary-dark: #991b1b;
+    --color-primary-rgb: 220, 38, 38;
 
     --color-secondary: #f97316;
     --color-secondary-hover: #ea580c;
     --color-secondary-light: #fb923c;
     --color-secondary-dark: #c2410c;
+    --color-secondary-rgb: 249, 115, 22;
 }
 
 /* Orange Theme */
@@ -219,11 +227,13 @@
     --color-primary-hover: #c2410c;
     --color-primary-light: #f97316;
     --color-primary-dark: #9a3412;
+    --color-primary-rgb: 234, 88, 12;
 
     --color-secondary: #f59e0b;
     --color-secondary-hover: #d97706;
     --color-secondary-light: #fbbf24;
     --color-secondary-dark: #b45309;
+    --color-secondary-rgb: 245, 158, 11;
 }
 
 /* Teal Theme */
@@ -232,11 +242,13 @@
     --color-primary-hover: #0f766e;
     --color-primary-light: #14b8a6;
     --color-primary-dark: #115e59;
+    --color-primary-rgb: 13, 148, 136;
 
     --color-secondary: #06b6d4;
     --color-secondary-hover: #0891b2;
     --color-secondary-light: #22d3ee;
     --color-secondary-dark: #0e7490;
+    --color-secondary-rgb: 6, 182, 212;
 }
 
 /* Pink Theme */
@@ -245,9 +257,11 @@
     --color-primary-hover: #be185d;
     --color-primary-light: #ec4899;
     --color-primary-dark: #9f1239;
+    --color-primary-rgb: 219, 39, 119;
 
     --color-secondary: #a855f7;
     --color-secondary-hover: #9333ea;
     --color-secondary-light: #c084fc;
     --color-secondary-dark: #7e22ce;
+    --color-secondary-rgb: 168, 85, 247;
 }

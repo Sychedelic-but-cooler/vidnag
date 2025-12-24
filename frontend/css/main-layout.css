@@ -66,8 +66,8 @@ body {
    ============================================================ */
 
 .main-content {
-    width: 85%;
-    max-width: 85vw;
+    width: 95%;
+    max-width: 95vw;
     margin: 0 auto;
     padding: var(--space-lg) 0;
     padding-top: calc(var(--space-lg) + 140px); /* Account for header + tabs */
@@ -199,8 +199,8 @@ body {
     }
 
     .main-content {
-        width: 90%;
-        max-width: 90vw;
+        width: 95%;
+        max-width: 95vw;
         padding: var(--space-md) 0;
         padding-top: calc(var(--space-md) + 130px);
     }
@@ -214,8 +214,8 @@ body {
     }
 
     .main-content {
-        width: 95%;
-        max-width: 95vw;
+        width: 96%;
+        max-width: 96vw;
         padding: var(--space-sm) 0;
         padding-top: calc(var(--space-sm) + 120px);
     }

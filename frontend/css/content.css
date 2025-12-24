@@ -222,9 +222,9 @@
     align-items: center;
 }
 
-.history-item-actions button {
-    padding: var(--space-xs) var(--space-sm);
-    font-size: var(--text-xs);
+.history-item-actions .glass-btn-small {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.85rem;
 }
 
 /* ============================================================
@@ -342,9 +342,9 @@
     gap: var(--space-xs);
 }
 
-.conversion-item-actions button {
-    padding: var(--space-xs) var(--space-sm);
-    font-size: var(--text-xs);
+.conversion-item-actions .glass-btn-small {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.85rem;
 }
 
 /* ============================================================
@@ -465,9 +465,10 @@
     gap: var(--space-xs);
 }
 
-.file-actions button {
-    padding: var(--space-xs) var(--space-sm);
-    font-size: var(--text-xs);
+.file-actions .glass-btn-small {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
 }
 
 /* ============================================================
@@ -537,8 +538,22 @@
         gap: var(--space-xs);
     }
 
+    .history-item-actions {
+        flex-wrap: wrap;
+    }
+
+    .history-item-actions .glass-btn-small {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.75rem;
+    }
+
     .conversion-item {
         padding: var(--space-sm);
+    }
+
+    .conversion-item-actions .glass-btn-small {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.75rem;
     }
 
     .file-table th,
@@ -553,6 +568,15 @@
 
     .file-icon {
         font-size: var(--text-base);
+    }
+
+    .file-actions {
+        flex-wrap: wrap;
+    }
+
+    .file-actions .glass-btn-small {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
     }
 
     .upload-zone {

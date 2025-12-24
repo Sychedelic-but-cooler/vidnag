@@ -65,21 +65,8 @@
     gap: var(--space-sm);
 }
 
-.header-right .glass-btn-icon {
-    position: relative;
-    transition: all var(--transition-fast);
-}
-
-.header-right .glass-btn-icon:hover {
-    box-shadow: var(--glass-shadow), var(--glass-glow);
-}
-
 .header-right .glass-btn-icon span {
     font-size: 1.25rem;
-}
-
-.header-right .glass-btn {
-    padding: var(--space-sm) var(--space-md);
 }
 
 .header-right a.glass-btn-icon {
@@ -95,16 +82,18 @@
 
 #logout-btn {
     background: var(--glass-bg-strong);
-    border-color: var(--glass-border-strong);
+    border: 1px solid var(--glass-border-strong);
     color: var(--text-primary);
-    font-weight: var(--font-semibold);
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
 }
 
 #logout-btn:hover {
-    background: var(--color-error);
-    border-color: var(--color-error);
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    border: none;
     color: white;
-    box-shadow: var(--glass-shadow), 0 0 20px rgba(220, 38, 38, 0.4);
+    box-shadow: 0 8px 20px rgba(255, 68, 68, 0.4);
 }
 
 /* ============================================================

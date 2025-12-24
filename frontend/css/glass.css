@@ -224,7 +224,7 @@
 }
 
 /* ============================================================
-   GLASS BUTTONS
+   GLASS BUTTONS - Modern Gradient Style
    ============================================================ */
 
 .glass-btn {
@@ -232,42 +232,135 @@
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-sm) var(--space-lg);
+    border-radius: 8px;
+    padding: 0.75rem 2rem;
     color: var(--text-primary);
-    font-size: var(--text-base);
-    font-weight: var(--font-medium);
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     white-space: nowrap;
 }
 
 .glass-btn:hover {
     background: var(--glass-bg-strong);
     border-color: var(--glass-border-strong);
-    box-shadow: var(--glass-shadow);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .glass-btn-primary {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    border: none;
     color: white;
 }
 
 .glass-btn-primary:hover {
-    background: var(--color-primary-hover);
-    border-color: var(--color-primary-hover);
-    box-shadow: var(--glass-shadow), var(--glass-glow);
+    box-shadow: 0 8px 20px rgba(var(--color-primary-rgb, 102, 126, 234), 0.4);
+}
+
+.glass-btn-secondary {
+    background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-light));
+    border: none;
+    color: white;
+}
+
+.glass-btn-secondary:hover {
+    box-shadow: 0 8px 20px rgba(var(--color-secondary-rgb, 108, 92, 231), 0.4);
+}
+
+.glass-btn-danger {
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    border: none;
+    color: white;
+}
+
+.glass-btn-danger:hover {
+    box-shadow: 0 8px 20px rgba(255, 68, 68, 0.4);
+}
+
+.glass-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.glass-btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
 }
 
 .glass-btn-icon {
-    padding: var(--space-sm);
-    width: 40px;
-    height: 40px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 0.6rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-full);
+    width: 40px;
+    height: 40px;
+}
+
+.glass-btn-icon:hover {
+    background: var(--glass-bg-strong);
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(var(--color-primary-rgb, 102, 126, 234), 0.2);
+}
+
+/* Button Groups */
+.button-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.button-group .glass-btn {
+    flex: 1;
+    min-width: 200px;
+}
+
+@media (max-width: 768px) {
+    .button-group {
+        flex-direction: column;
+    }
+
+    .button-group .glass-btn {
+        min-width: 100%;
+    }
+
+    .glass-btn {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .glass-btn-small {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .glass-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        letter-spacing: 0.03em;
+    }
+
+    .glass-btn-small {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.75rem;
+    }
+
+    .glass-btn-icon {
+        width: 36px;
+        height: 36px;
+        padding: 0.5rem;
+    }
 }
 
 /* ============================================================
