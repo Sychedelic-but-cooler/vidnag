@@ -126,9 +126,10 @@ class PluginManager:
                 plugin.register_routes(app)
 
                 # Add middleware (in reverse order so first plugin wraps outermost)
-                middleware = plugin.get_middleware()
-                if middleware:
-                    app.add_middleware(middleware(app))
+                middleware_info = plugin.get_middleware()
+                if middleware_info:
+                    middleware_class, middleware_kwargs = middleware_info
+                    app.add_middleware(middleware_class, **middleware_kwargs)
                     self.logger.app.info(f"Added middleware for: {plugin.name}")
 
                 initialized_count += 1

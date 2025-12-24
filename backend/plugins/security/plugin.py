@@ -76,10 +76,13 @@ class SecurityPlugin(MiddlewarePlugin):
             if header not in headers:
                 self.log_warning(f"Critical security header '{header}' is not configured")
 
-    def create_middleware(self, app: ASGIApp) -> BaseHTTPMiddleware:
-        """Create security headers middleware"""
-        headers = self.config.get('headers', {})
-        return SecurityHeadersMiddleware(app, headers)
+    def get_middleware_class(self) -> type:
+        """Return the middleware class"""
+        return SecurityHeadersMiddleware
+
+    def get_middleware_kwargs(self) -> Dict[str, Any]:
+        """Return middleware constructor kwargs"""
+        return {"headers": self.config.get('headers', {})}
 
     def on_startup(self) -> None:
         """Log security headers on startup"""

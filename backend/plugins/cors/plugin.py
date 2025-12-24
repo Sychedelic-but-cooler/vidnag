@@ -3,7 +3,7 @@ CORS Plugin
 Handles Cross-Origin Resource Sharing
 """
 
-from typing import List
+from typing import List, Dict, Any
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
@@ -128,16 +128,19 @@ class CORSPlugin(MiddlewarePlugin):
                 "Specify explicit origins instead."
             )
 
-    def create_middleware(self, app: ASGIApp) -> BaseHTTPMiddleware:
-        """Create CORS middleware"""
-        return CORSMiddleware(
-            app,
-            allow_origins=self.config.get('allow_origins', []),
-            allow_methods=self.config.get('allow_methods', ['GET', 'POST']),
-            allow_headers=self.config.get('allow_headers', []),
-            allow_credentials=self.config.get('allow_credentials', False),
-            max_age=self.config.get('max_age', 600)
-        )
+    def get_middleware_class(self) -> type:
+        """Return the middleware class"""
+        return CORSMiddleware
+
+    def get_middleware_kwargs(self) -> Dict[str, Any]:
+        """Return middleware constructor kwargs"""
+        return {
+            "allow_origins": self.config.get('allow_origins', []),
+            "allow_methods": self.config.get('allow_methods', ['GET', 'POST']),
+            "allow_headers": self.config.get('allow_headers', []),
+            "allow_credentials": self.config.get('allow_credentials', False),
+            "max_age": self.config.get('max_age', 600)
+        }
 
     def on_startup(self) -> None:
         """Log CORS configuration on startup"""

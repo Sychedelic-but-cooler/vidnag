@@ -56,16 +56,15 @@ class Plugin(ABC):
         """Called on application shutdown"""
         pass
 
-    def get_middleware(self) -> Optional[Callable]:
+    def get_middleware(self) -> Optional[tuple]:
         """
-        Return middleware factory function if plugin provides one
+        Return middleware class and kwargs for FastAPI registration
 
-        Return a function that takes an app and returns a middleware instance:
+        Returns:
+            None or tuple of (middleware_class, kwargs_dict)
 
-        def middleware_factory(app):
-            return MyMiddleware(app, self.config)
-
-        return middleware_factory
+        Example:
+            return (MyMiddleware, {"config": self.config})
         """
         return None
 
@@ -107,13 +106,18 @@ class MiddlewarePlugin(Plugin):
     """Base class for plugins that provide middleware"""
 
     @abstractmethod
-    def create_middleware(self, app: ASGIApp) -> BaseHTTPMiddleware:
-        """Create and return middleware instance"""
+    def get_middleware_class(self) -> type:
+        """Return the middleware class to register"""
         pass
 
-    def get_middleware(self) -> Optional[Callable]:
-        """Return middleware factory"""
-        return lambda app: self.create_middleware(app)
+    @abstractmethod
+    def get_middleware_kwargs(self) -> Dict[str, Any]:
+        """Return kwargs for middleware constructor (excluding 'app')"""
+        pass
+
+    def get_middleware(self) -> Optional[tuple]:
+        """Return middleware class and kwargs for registration"""
+        return (self.get_middleware_class(), self.get_middleware_kwargs())
 
 
 class RoutePlugin(Plugin):

@@ -224,8 +224,12 @@ class RateLimitPlugin(MiddlewarePlugin):
                 except Exception as e:
                     raise ValueError(f"Invalid limit format: {e}")
 
-    def create_middleware(self, app: ASGIApp) -> BaseHTTPMiddleware:
-        """Create rate limit middleware"""
+    def get_middleware_class(self) -> type:
+        """Return the middleware class"""
+        return RateLimitMiddleware
+
+    def get_middleware_kwargs(self) -> Dict[str, str]:
+        """Return middleware constructor kwargs"""
         global_limit = self.config.get('global_limit', '100/hour')
 
         # Build path-specific limits
@@ -243,7 +247,10 @@ class RateLimitPlugin(MiddlewarePlugin):
         if self.config.get('processing_limit'):
             path_limits['/api/videos/process'] = self.config['processing_limit']
 
-        return RateLimitMiddleware(app, global_limit, path_limits)
+        return {
+            "global_limit": global_limit,
+            "path_limits": path_limits
+        }
 
     def on_startup(self) -> None:
         """Log rate limit configuration on startup"""

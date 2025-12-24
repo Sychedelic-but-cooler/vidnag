@@ -3,7 +3,8 @@ Auth Plugin
 JWT-based authentication middleware
 """
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
+from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
@@ -162,8 +163,12 @@ class AuthPlugin(MiddlewarePlugin):
         app.state.auth_service = self.auth_service
         app.state.jwt_manager = jwt_manager
 
-    def create_middleware(self, app: ASGIApp) -> BaseHTTPMiddleware:
-        """Create auth middleware"""
+    def get_middleware_class(self) -> type:
+        """Return the middleware class"""
+        return AuthMiddleware
+
+    def get_middleware_kwargs(self) -> Dict[str, Any]:
+        """Return middleware constructor kwargs"""
         # Get exempt paths from plugin config
         exempt_paths = self.config.get('exempt_paths', [
             '/api/auth/login',
@@ -176,12 +181,11 @@ class AuthPlugin(MiddlewarePlugin):
             '/'
         ])
 
-        return AuthMiddleware(
-            app,
-            exempt_paths,
-            self.auth_service,
-            self.db_manager
-        )
+        return {
+            "exempt_paths": exempt_paths,
+            "auth_service": self.auth_service,
+            "db_manager": self.db_manager
+        }
 
     def on_startup(self) -> None:
         """Log auth configuration on startup"""
