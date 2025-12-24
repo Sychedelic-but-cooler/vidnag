@@ -178,7 +178,9 @@ class AuthPlugin(MiddlewarePlugin):
             '/health',
             '/docs',
             '/openapi.json',
-            '/'
+            '/',
+            '/static/*',
+            '/favicon.ico'
         ])
 
         return {
