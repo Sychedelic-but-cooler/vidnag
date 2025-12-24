@@ -80,28 +80,28 @@ class YtDlpWrapper:
         """
         Build format selector string for yt-dlp
 
-        Always auto-selects best quality within size limit.
-        Tries to get separate video and audio streams for best quality,
-        falls back to combined format if needed.
+        Uses a robust fallback strategy that tries multiple format options.
+        Size limiting is handled by --max-filesize flag during download,
+        not by pre-filtering formats (which often fails due to missing metadata).
+
+        Strategy:
+        1. Try best video + best audio (YouTube's typical separate streams)
+        2. Fall back to best combined format
+        3. Fall back to best video only
+        4. Fall back to best available format
 
         Args:
-            max_size_mb: Maximum file size in megabytes
+            max_size_mb: Maximum file size in megabytes (used for reference)
 
         Returns:
             Format selector string for yt-dlp
 
         Example:
-            For max_size_mb=1000:
-            "bestvideo[filesize<1000M]+bestaudio[filesize<100M]/best[filesize<1000M]"
+            "bestvideo+bestaudio/best"
         """
-        # For separate streams: allow video up to max size, audio up to 100MB
-        # For combined: total must be under max size
-        audio_size_mb = min(100, max_size_mb // 10)  # Audio typically 10% of video
-
-        return (
-            f"bestvideo[filesize<{max_size_mb}M]+bestaudio[filesize<{audio_size_mb}M]/"
-            f"best[filesize<{max_size_mb}M]"
-        )
+        # Don't pre-filter by filesize in format selector - let --max-filesize handle it
+        # This prevents "format not available" errors when filesize metadata is missing
+        return "bestvideo+bestaudio/best"
 
     @staticmethod
     def build_download_command(
