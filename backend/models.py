@@ -123,8 +123,8 @@ class Video(Base, TimestampMixin):
         CheckConstraint("status IN ('processing', 'ready', 'error', 'deleted')", name='check_status'),
         CheckConstraint('file_size > 0', name='check_file_size_positive'),
         CheckConstraint('view_count >= 0', name='check_view_count_positive'),
-        Index('idx_user_status', 'user_id', 'status'),
-        Index('idx_visibility_status', 'visibility', 'status'),
+        Index('idx_video_user_status', 'user_id', 'status'),
+        Index('idx_video_visibility_status', 'visibility', 'status'),
     )
 
     def generate_share_token(self, expiry_days: int = 30) -> str:
@@ -193,8 +193,8 @@ class ProcessingJob(Base, TimestampMixin):
         ),
         CheckConstraint('progress >= 0 AND progress <= 100', name='check_progress_range'),
         CheckConstraint('retry_count >= 0', name='check_retry_count_positive'),
-        Index('idx_status_priority', 'status', 'priority'),
-        Index('idx_user_status', 'user_id', 'status'),
+        Index('idx_job_status_priority', 'status', 'priority'),
+        Index('idx_job_user_status', 'user_id', 'status'),
     )
 
     def __repr__(self):
