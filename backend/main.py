@@ -42,6 +42,12 @@ async def lifespan(app: FastAPI):
     # Shutdown
     logger.app.info("Shutting down Vidnag...")
 
+    # Shutdown download manager
+    if hasattr(app.state, 'download_manager'):
+        logger.app.info("Shutting down download manager...")
+        app.state.download_manager.shutdown(wait=True, timeout=30.0)
+        logger.app.info("Download manager shutdown complete")
+
     # Shutdown plugins
     app.state.plugin_manager.shutdown_plugins()
 
@@ -118,10 +124,28 @@ def create_app() -> FastAPI:
 
     logger.app.info(f"Loaded {len(plugin_manager.get_loaded_plugins())} plugins")
 
+    # === DOWNLOAD SERVICE ===
+    logger.app.info("Initializing download service...")
+
+    from backend.workers.download_manager import DownloadManager
+    from backend.services.video_download_service import VideoDownloadService
+
+    download_manager = DownloadManager(settings, db, logger)
+    download_service = VideoDownloadService(settings, db, download_manager, logger)
+
+    app.state.download_manager = download_manager
+    app.state.download_service = download_service
+
+    logger.app.info("Download service initialized")
+
     # === API ROUTES ===
     # Include auth routes
     from backend.routes import auth
     app.include_router(auth.router)
+
+    # Include video routes
+    from backend.routes import videos
+    app.include_router(videos.router)
 
     logger.app.info("API routes registered")
 

@@ -10,8 +10,9 @@ sqlalchemy==2.0.23
 psycopg2-binary==2.9.9
 alembic==1.13.0
 
-# Video Download
-yt-dlp==2023.11.16
+# Video Processing & Download
+yt-dlp==2024.12.23
+ffmpeg-python==0.2.0
 
 # Auth & Security
 python-multipart==0.0.6

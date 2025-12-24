@@ -87,7 +87,8 @@
     ],
     "blocked_domains": [],
     "max_download_size_mb": 1000,
-    "timeout_seconds": 300
+    "timeout_seconds": 300,
+    "retry_attempts": 3
   },
   "sharing": {
     "enabled": true,
