@@ -244,7 +244,10 @@ class DownloadWorker:
                         self._update_job_progress(
                             job_id,
                             scaled_progress,
-                            f"Downloading: {progress_info['percent']:.1f}%"
+                            f"Downloading: {progress_info['percent']:.1f}%",
+                            download_speed=progress_info.get('speed'),
+                            download_eta=progress_info.get('eta'),
+                            total_size=progress_info.get('total_size')
                         )
                         last_progress_update = current_time
 
@@ -386,14 +389,35 @@ class DownloadWorker:
         self._mark_job_failed(job_id, error_msg, error_output)
         return error_msg
 
-    def _update_job_progress(self, job_id: int, progress: float, step: str) -> None:
-        """Update job progress in database"""
+    def _update_job_progress(
+        self,
+        job_id: int,
+        progress: float,
+        step: str,
+        download_speed: str = None,
+        download_eta: str = None,
+        total_size: str = None
+    ) -> None:
+        """Update job progress in database with download statistics"""
         try:
             with self.db.session_scope() as session:
                 job = session.query(ProcessingJob).filter(ProcessingJob.id == job_id).first()
                 if job:
                     job.progress = min(progress, 100.0)
                     job.current_step = step
+
+                    # Store download stats in output_params
+                    if download_speed or download_eta or total_size:
+                        if not job.output_params:
+                            job.output_params = {}
+
+                        if download_speed:
+                            job.output_params['download_speed'] = download_speed
+                        if download_eta:
+                            job.output_params['download_eta'] = download_eta
+                        if total_size:
+                            job.output_params['total_size'] = total_size
+
                     session.commit()
         except Exception as e:
             self.logger.app.error(f"Failed to update job progress: {e}")

@@ -241,6 +241,16 @@ class VideoDownloadService:
             'video': None
         }
 
+        # Add download statistics if available
+        if job.output_params:
+            response['download_speed'] = job.output_params.get('download_speed')
+            response['download_eta'] = job.output_params.get('download_eta')
+            response['total_size'] = job.output_params.get('total_size')
+        else:
+            response['download_speed'] = None
+            response['download_eta'] = None
+            response['total_size'] = None
+
         if video:
             response['video'] = {
                 'id': video.id,

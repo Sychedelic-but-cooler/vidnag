@@ -215,6 +215,9 @@ class VidnagApp {
         console.log('Loading downloads...');
 
         try {
+            // Load active jobs first (restore on page refresh)
+            await this.loadActiveJobs();
+
             // Load video history
             const response = await API.getVideos({ source_type: 'download', page: 1, per_page: 20 });
 
@@ -231,6 +234,40 @@ class VidnagApp {
             await this.updateActiveDownloads();
         } catch (error) {
             console.error('Failed to load downloads:', error);
+        }
+    }
+
+    /**
+     * Load active jobs from server (called on page load/refresh)
+     */
+    async loadActiveJobs() {
+        try {
+            const response = await API.get('/videos/jobs/active');
+
+            if (response && response.jobs && response.jobs.length > 0) {
+                // Restore active jobs to tracking map
+                for (const job of response.jobs) {
+                    this.activeDownloads.set(job.job_id, {
+                        job_id: job.job_id,
+                        video_id: job.video ? job.video.id : null,
+                        status: job.status,
+                        progress: job.progress || 0,
+                        current_step: job.current_step || 'Processing...',
+                        download_speed: job.download_speed,
+                        download_eta: job.download_eta,
+                        total_size: job.total_size
+                    });
+                }
+
+                // Start polling if we have active jobs
+                if (this.activeDownloads.size > 0) {
+                    this.startDownloadPolling();
+                }
+
+                console.log(`Restored ${response.jobs.length} active downloads`);
+            }
+        } catch (error) {
+            console.error('Failed to load active jobs:', error);
         }
     }
 
@@ -339,6 +376,24 @@ class VidnagApp {
             ? this.escapeHtml(jobStatus.error_message)
             : this.escapeHtml(jobStatus.current_step || 'Processing...');
 
+        // Build download statistics string
+        let downloadStats = '';
+        if (!isError && !isTemp) {
+            const stats = [];
+            if (jobStatus.download_speed) {
+                stats.push(`${this.escapeHtml(jobStatus.download_speed)}`);
+            }
+            if (jobStatus.download_eta) {
+                stats.push(`ETA ${this.escapeHtml(jobStatus.download_eta)}`);
+            }
+            if (jobStatus.total_size) {
+                stats.push(`${this.escapeHtml(jobStatus.total_size)}`);
+            }
+            if (stats.length > 0) {
+                downloadStats = `<span class="download-stats">${stats.join(' • ')}</span>`;
+            }
+        }
+
         return `
             <div class="download-item${errorClass}">
                 <div class="download-item-header">
@@ -355,6 +410,7 @@ class VidnagApp {
                     <span>${Math.round(progress)}%</span>
                     <span>${this.escapeHtml(jobStatus.video?.title || jobStatus.url || 'Downloading...')}</span>
                 </div>
+                ${downloadStats ? `<div class="download-item-stats">${downloadStats}</div>` : ''}
                 ` : `
                 <div class="download-item-info">
                     <span>${this.escapeHtml(jobStatus.url || '')}</span>

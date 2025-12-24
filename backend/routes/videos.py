@@ -218,6 +218,51 @@ def get_download_status(
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
+@router.get("/jobs/active")
+def get_active_jobs(
+    db: Session = Depends(get_db_session),
+    user: User = Depends(get_current_user),
+    download_service: VideoDownloadService = Depends(get_download_service)
+):
+    """
+    Get all active download jobs for current user
+
+    Returns jobs that are pending or running.
+    Used to restore active downloads when page is refreshed.
+
+    Privacy: User sees only their own jobs
+    """
+    from backend.models import ProcessingJob
+
+    try:
+        # Query active jobs
+        query = db.query(ProcessingJob).filter(
+            ProcessingJob.user_id == user.id,
+            ProcessingJob.job_type == 'download',
+            ProcessingJob.status.in_(['pending', 'running'])
+        ).order_by(ProcessingJob.created_at.desc())
+
+        jobs = query.all()
+
+        # Build response with job statuses
+        active_jobs = []
+        for job in jobs:
+            status = download_service.get_download_status(
+                db=db,
+                job_id=job.id,
+                user_id=user.id,
+                is_admin=user.is_admin
+            )
+            active_jobs.append(status)
+
+        return {"jobs": active_jobs, "count": len(active_jobs)}
+
+    except Exception as e:
+        logger = get_logger()
+        logger.app.error(f"Error getting active jobs: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
 @router.get("", response_model=VideoList)
 def list_videos(
     page: int = Query(1, ge=1, description="Page number"),
