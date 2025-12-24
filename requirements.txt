@@ -16,7 +16,7 @@ yt-dlp==2023.11.16
 # Auth & Security
 python-multipart==0.0.6
 python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
 
 # JSON Schema Validation
 jsonschema==4.20.0

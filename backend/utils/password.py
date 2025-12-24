@@ -3,11 +3,7 @@ Password Hashing Utilities
 Secure password hashing using bcrypt
 """
 
-from passlib.context import CryptContext
-
-
-# Password context using bcrypt
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+import bcrypt
 
 
 def hash_password(password: str) -> str:
@@ -18,14 +14,13 @@ def hash_password(password: str) -> str:
         password: Plain text password
 
     Returns:
-        str: Hashed password
+        str: Hashed password (base64 encoded)
 
     Note:
         Bcrypt has a maximum password length of 72 bytes.
         Passwords are automatically truncated to this limit.
     """
     # Bcrypt has a 72-byte limit, truncate if necessary
-    # Encode to bytes, truncate to 72 bytes, handle as bytes
     password_bytes = password.encode('utf-8')
     if len(password_bytes) > 72:
         # Truncate to 72 bytes, being careful not to split UTF-8 sequences
@@ -33,13 +28,18 @@ def hash_password(password: str) -> str:
         # Find the last valid UTF-8 character boundary
         while len(password_bytes) > 0:
             try:
-                password = password_bytes.decode('utf-8')
+                password_bytes.decode('utf-8')
                 break
             except UnicodeDecodeError:
                 # We cut in the middle of a multi-byte character, try one byte less
                 password_bytes = password_bytes[:-1]
 
-    return pwd_context.hash(password)
+    # Generate salt and hash
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+
+    # Return as string (bcrypt returns bytes)
+    return hashed.decode('utf-8')
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -63,12 +63,16 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         # Find the last valid UTF-8 character boundary
         while len(password_bytes) > 0:
             try:
-                plain_password = password_bytes.decode('utf-8')
+                password_bytes.decode('utf-8')
                 break
             except UnicodeDecodeError:
                 password_bytes = password_bytes[:-1]
 
-    return pwd_context.verify(plain_password, hashed_password)
+    # Convert hashed password string back to bytes
+    hashed_bytes = hashed_password.encode('utf-8')
+
+    # Verify using bcrypt
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
 
 
 def validate_password_strength(password: str, min_length: int = 8) -> tuple[bool, str]:
