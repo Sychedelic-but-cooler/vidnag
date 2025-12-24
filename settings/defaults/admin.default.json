@@ -1,11 +1,7 @@
 {
   "plugins": {
     "enabled": [
-      "proxy",
-      "auth",
-      "ratelimit",
-      "cors",
-      "security"
+      "auth"
     ],
     "disabled": [],
     "load_order": [
