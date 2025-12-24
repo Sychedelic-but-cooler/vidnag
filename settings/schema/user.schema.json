@@ -1,0 +1,142 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["interface", "video_player", "notifications", "defaults", "display"],
+  "properties": {
+    "interface": {
+      "type": "object",
+      "properties": {
+        "default_language": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 5
+        },
+        "available_languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "date_format": {
+          "type": "string"
+        },
+        "time_format": {
+          "type": "string",
+          "enum": ["12h", "24h"]
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 100
+        },
+        "theme": {
+          "type": "string",
+          "enum": ["light", "dark", "auto"]
+        }
+      }
+    },
+    "video_player": {
+      "type": "object",
+      "properties": {
+        "autoplay": {
+          "type": "boolean"
+        },
+        "default_quality": {
+          "type": "string"
+        },
+        "quality_options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "volume": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "muted": {
+          "type": "boolean"
+        },
+        "playback_speed": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 2.0
+        },
+        "show_controls": {
+          "type": "boolean"
+        },
+        "loop": {
+          "type": "boolean"
+        }
+      }
+    },
+    "notifications": {
+      "type": "object",
+      "properties": {
+        "processing_complete": {
+          "type": "boolean"
+        },
+        "processing_failed": {
+          "type": "boolean"
+        },
+        "storage_warning": {
+          "type": "boolean"
+        },
+        "storage_full": {
+          "type": "boolean"
+        },
+        "share_accessed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "video_visibility": {
+          "type": "string",
+          "enum": ["private", "unlisted", "public"]
+        },
+        "generate_thumbnail": {
+          "type": "boolean"
+        },
+        "output_format": {
+          "type": "string"
+        },
+        "output_quality": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "delete_after_download": {
+          "type": "boolean"
+        }
+      }
+    },
+    "display": {
+      "type": "object",
+      "properties": {
+        "show_file_sizes": {
+          "type": "boolean"
+        },
+        "show_duration": {
+          "type": "boolean"
+        },
+        "show_resolution": {
+          "type": "boolean"
+        },
+        "grid_view": {
+          "type": "boolean"
+        },
+        "sort_by": {
+          "type": "string",
+          "enum": ["created_date", "modified_date", "name", "size", "duration"]
+        },
+        "sort_order": {
+          "type": "string",
+          "enum": ["asc", "desc"]
+        }
+      }
+    }
+  }
+}

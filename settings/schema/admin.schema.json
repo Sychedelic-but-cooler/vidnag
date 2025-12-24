@@ -1,0 +1,381 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["plugins", "users", "server", "videos", "processing"],
+  "properties": {
+    "plugins": {
+      "type": "object",
+      "required": ["enabled", "disabled", "load_order"],
+      "properties": {
+        "enabled": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "disabled": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "load_order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "users": {
+      "type": "object",
+      "properties": {
+        "registration_enabled": {
+          "type": "boolean"
+        },
+        "require_email_verification": {
+          "type": "boolean"
+        },
+        "password_min_length": {
+          "type": "integer",
+          "minimum": 6,
+          "maximum": 128
+        },
+        "password_require_uppercase": {
+          "type": "boolean"
+        },
+        "password_require_lowercase": {
+          "type": "boolean"
+        },
+        "password_require_numbers": {
+          "type": "boolean"
+        },
+        "password_require_special": {
+          "type": "boolean"
+        },
+        "default_storage_quota_gb": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_storage_quota_gb": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "allow_admin_registration": {
+          "type": "boolean"
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "properties": {
+        "workers": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "max_connections": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "videos": {
+      "type": "object",
+      "properties": {
+        "max_upload_size_mb": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_duration_minutes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "allowed_formats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "auto_generate_thumbnails": {
+          "type": "boolean"
+        },
+        "thumbnail_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "allowed_codecs": {
+          "type": "object",
+          "properties": {
+            "video": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "audio": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "processing": {
+      "type": "object",
+      "properties": {
+        "max_concurrent_jobs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "job_timeout_minutes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "allowed_output_formats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "max_output_resolution": {
+          "type": "string",
+          "pattern": "^\\d+x\\d+$"
+        },
+        "ffmpeg_presets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"]
+          }
+        },
+        "ffmpeg_quality": {
+          "type": "object",
+          "properties": {
+            "low": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 51
+            },
+            "medium": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 51
+            },
+            "high": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 51
+            }
+          }
+        }
+      }
+    },
+    "downloads": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "allowed_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocked_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "max_download_size_mb": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "sharing": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "require_authentication": {
+          "type": "boolean"
+        },
+        "token_expiry_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "allow_public_sharing": {
+          "type": "boolean"
+        },
+        "allow_anonymous_view": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ratelimit": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "global_limit": {
+          "type": "string",
+          "pattern": "^\\d+/(second|minute|hour|day)$"
+        },
+        "upload_limit": {
+          "type": "string",
+          "pattern": "^\\d+/(second|minute|hour|day)$"
+        },
+        "download_limit": {
+          "type": "string",
+          "pattern": "^\\d+/(second|minute|hour|day)$"
+        },
+        "auth_limit": {
+          "type": "string",
+          "pattern": "^\\d+/(second|minute|hour|day)$"
+        },
+        "processing_limit": {
+          "type": "string",
+          "pattern": "^\\d+/(second|minute|hour|day)$"
+        }
+      }
+    },
+    "proxy": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "trusted_proxies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "headers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "cors": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "allow_origins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allow_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allow_headers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allow_credentials": {
+          "type": "boolean"
+        },
+        "max_age": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "properties": {
+        "retention_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365
+        },
+        "rotation": {
+          "type": "string",
+          "enum": ["daily", "weekly", "monthly"]
+        },
+        "browser_debug": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "allowed_user_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "log_levels": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+              }
+            }
+          }
+        },
+        "log_levels": {
+          "type": "object",
+          "properties": {
+            "admin": {
+              "type": "string",
+              "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+            },
+            "user": {
+              "type": "string",
+              "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+            },
+            "application": {
+              "type": "string",
+              "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+            }
+          }
+        },
+        "sensitive_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

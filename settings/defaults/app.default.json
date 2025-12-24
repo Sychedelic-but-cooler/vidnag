@@ -1,0 +1,38 @@
+{
+  "app": {
+    "name": "Vidnag",
+    "version": "0.1.0",
+    "description": "Video download, processing, and sharing platform"
+  },
+  "security": {
+    "secret_key": "i4oQEUPwxicdlU6e47XpIKZZ8TgH6KsjKD54q8ao0tPcrhBzUBLA1VPUfI6w6ORL",
+    "jwt_algorithm": "HS256",
+    "session_timeout_days": 7,
+    "allowed_hosts": [
+      "localhost",
+      "127.0.0.1"
+    ],
+    "debug_mode": false,
+    "critical_plugins": [
+      "auth",
+      "security"
+    ]
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "name": "vidnag",
+    "user": "vidnag_user",
+    "password": "odp8IHCrfIy3b92ffiDYgiyBBStE3ilpYyKWYMKecLxhXdxi73O7bZ00q4ZHRXsU"
+  },
+  "storage": {
+    "base_path": "/var/vidnag/storage",
+    "temp_path": "/var/vidnag/temp",
+    "max_system_storage_gb": 100
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "reload": false
+  }
+}

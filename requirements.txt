@@ -1,0 +1,25 @@
+# Vidnag v0.1.0 Dependencies
+# Generated for Python 3.10+
+
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Database
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+alembic==1.13.0
+
+# Video Download
+yt-dlp==2023.11.16
+
+# Auth & Security
+python-multipart==0.0.6
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# JSON Schema Validation
+jsonschema==4.20.0
+
+# File Type Detection
+python-magic==0.4.27

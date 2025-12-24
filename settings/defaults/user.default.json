@@ -1,0 +1,55 @@
+{
+  "interface": {
+    "default_language": "en",
+    "available_languages": [
+      "en",
+      "es",
+      "fr",
+      "de"
+    ],
+    "date_format": "YYYY-MM-DD",
+    "time_format": "24h",
+    "items_per_page": 20,
+    "theme": "light"
+  },
+  "video_player": {
+    "autoplay": false,
+    "default_quality": "auto",
+    "quality_options": [
+      "auto",
+      "2160p",
+      "1440p",
+      "1080p",
+      "720p",
+      "480p",
+      "360p"
+    ],
+    "volume": 80,
+    "muted": false,
+    "playback_speed": 1.0,
+    "show_controls": true,
+    "loop": false
+  },
+  "notifications": {
+    "processing_complete": true,
+    "processing_failed": true,
+    "storage_warning": true,
+    "storage_full": true,
+    "share_accessed": false
+  },
+  "defaults": {
+    "video_visibility": "private",
+    "generate_thumbnail": true,
+    "output_format": "mp4",
+    "output_quality": "high",
+    "delete_after_download": false
+  },
+  "display": {
+    "show_file_sizes": true,
+    "show_duration": true,
+    "show_resolution": true,
+    "grid_view": true,
+    "sort_by": "created_date",
+    "sort_order": "desc"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "plugins": {
+    "enabled": [
+      "proxy",
+      "auth",
+      "ratelimit",
+      "cors",
+      "security"
+    ],
+    "disabled": [],
+    "load_order": [
+      "proxy",
+      "cors",
+      "security",
+      "ratelimit",
+      "auth"
+    ]
+  },
+  "users": {
+    "registration_enabled": true,
+    "require_email_verification": false,
+    "password_min_length": 8,
+    "password_require_uppercase": false,
+    "password_require_lowercase": false,
+    "password_require_numbers": false,
+    "password_require_special": false,
+    "default_storage_quota_gb": 10,
+    "max_storage_quota_gb": 50,
+    "allow_admin_registration": false
+  },
+  "server": {
+    "workers": 4,
+    "max_connections": 100
+  },
+  "videos": {
+    "max_upload_size_mb": 500,
+    "max_duration_minutes": 120,
+    "allowed_formats": [
+      "mp4",
+      "webm",
+      "avi",
+      "mov",
+      "mkv"
+    ],
+    "auto_generate_thumbnails": true,
+    "thumbnail_count": 3,
+    "allowed_codecs": {
+      "video": [
+        "h264",
+        "h265",
+        "vp8",
+        "vp9",
+        "av1"
+      ],
+      "audio": [
+        "aac",
+        "opus",
+        "mp3",
+        "vorbis"
+      ]
+    }
+  },
+  "processing": {
+    "max_concurrent_jobs": 4,
+    "job_timeout_minutes": 60,
+    "allowed_output_formats": [
+      "mp4",
+      "webm",
+      "avi"
+    ],
+    "max_output_resolution": "1920x1080",
+    "ffmpeg_presets": [
+      "ultrafast",
+      "fast",
+      "medium",
+      "slow"
+    ],
+    "ffmpeg_quality": {
+      "low": 28,
+      "medium": 23,
+      "high": 18
+    }
+  },
+  "downloads": {
+    "enabled": true,
+    "allowed_domains": [
+      "youtube.com",
+      "youtu.be",
+      "vimeo.com",
+      "dailymotion.com"
+    ],
+    "blocked_domains": [],
+    "max_download_size_mb": 1000,
+    "timeout_seconds": 300
+  },
+  "sharing": {
+    "enabled": true,
+    "require_authentication": false,
+    "token_expiry_days": 30,
+    "allow_public_sharing": true,
+    "allow_anonymous_view": true
+  },
+  "ratelimit": {
+    "enabled": true,
+    "global_limit": "100/hour",
+    "upload_limit": "10/hour",
+    "download_limit": "20/hour",
+    "auth_limit": "5/minute",
+    "processing_limit": "50/hour"
+  },
+  "proxy": {
+    "enabled": false,
+    "trusted_proxies": [
+      "127.0.0.1",
+      "10.0.0.0/8",
+      "172.16.0.0/12",
+      "192.168.0.0/16"
+    ],
+    "headers": [
+      "X-Forwarded-For",
+      "X-Real-IP",
+      "CF-Connecting-IP"
+    ]
+  },
+  "cors": {
+    "enabled": true,
+    "allow_origins": [
+      "http://localhost:3000"
+    ],
+    "allow_methods": [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "OPTIONS"
+    ],
+    "allow_headers": [
+      "*"
+    ],
+    "allow_credentials": true,
+    "max_age": 3600
+  },
+  "security": {
+    "enabled": true,
+    "headers": {
+      "X-Frame-Options": "DENY",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+      "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Permissions-Policy": "geolocation=(), microphone=(), camera=()"
+    }
+  },
+  "logging": {
+    "retention_days": 7,
+    "rotation": "daily",
+    "browser_debug": {
+      "enabled": false,
+      "allowed_user_ids": [],
+      "log_levels": ["ERROR", "WARNING", "INFO"]
+    },
+    "log_levels": {
+      "admin": "INFO",
+      "user": "INFO",
+      "application": "INFO"
+    },
+    "sensitive_fields": [
+      "password",
+      "secret_key",
+      "token",
+      "jwt",
+      "api_key"
+    ]
+  }
+}

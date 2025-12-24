@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["app", "security", "database", "storage", "server"],
+  "properties": {
+    "app": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "required": ["secret_key", "jwt_algorithm", "session_timeout_days", "allowed_hosts"],
+      "properties": {
+        "secret_key": {
+          "type": "string",
+          "minLength": 32
+        },
+        "jwt_algorithm": {
+          "type": "string",
+          "enum": ["HS256", "HS384", "HS512"]
+        },
+        "session_timeout_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365
+        },
+        "allowed_hosts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "debug_mode": {
+          "type": "boolean"
+        },
+        "critical_plugins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "database": {
+      "type": "object",
+      "required": ["host", "port", "name", "user", "password"],
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "name": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "storage": {
+      "type": "object",
+      "required": ["base_path", "temp_path", "max_system_storage_gb"],
+      "properties": {
+        "base_path": {
+          "type": "string"
+        },
+        "temp_path": {
+          "type": "string"
+        },
+        "max_system_storage_gb": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "required": ["host", "port"],
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "reload": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

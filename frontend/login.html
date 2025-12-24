@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vidnag - Login</title>
+    <link rel="stylesheet" href="/static/css/auth.css">
+</head>
+<body>
+    <div class="container">
+        <div class="auth-box">
+            <h1>Vidnag</h1>
+            <p class="subtitle">Video Processing Platform</p>
+
+            <div id="error-message" class="error" style="display: none;"></div>
+            <div id="success-message" class="success" style="display: none;"></div>
+
+            <!-- Login Form -->
+            <form id="login-form">
+                <h2>Login</h2>
+
+                <div class="form-group">
+                    <label for="login-username">Username or Email</label>
+                    <input
+                        type="text"
+                        id="login-username"
+                        name="username"
+                        required
+                        placeholder="Enter username or email"
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input
+                        type="password"
+                        id="login-password"
+                        name="password"
+                        required
+                        placeholder="Enter password"
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" style="display: none;">
+                <h2>Register</h2>
+
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <input
+                        type="text"
+                        id="register-username"
+                        name="username"
+                        required
+                        placeholder="Choose a username"
+                        autocomplete="username"
+                        minlength="3"
+                        maxlength="50"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input
+                        type="email"
+                        id="register-email"
+                        name="email"
+                        required
+                        placeholder="Enter email address"
+                        autocomplete="email"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input
+                        type="password"
+                        id="register-password"
+                        name="password"
+                        required
+                        placeholder="Choose a password"
+                        autocomplete="new-password"
+                        minlength="8"
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+
+            <!-- Toggle -->
+            <div class="toggle">
+                <span id="toggle-message">Don't have an account?</span>
+                <a href="#" id="toggle-link">Register</a>
+            </div>
+        </div>
+
+        <!-- User Info (after login) -->
+        <div id="user-info" class="user-info" style="display: none;">
+            <h2>Welcome, <span id="username"></span>!</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Email:</strong> <span id="user-email"></span>
+                </div>
+                <div class="info-item">
+                    <strong>Admin:</strong> <span id="user-admin"></span>
+                </div>
+                <div class="info-item">
+                    <strong>Storage Used:</strong> <span id="storage-used"></span>
+                </div>
+                <div class="info-item">
+                    <strong>Storage Quota:</strong> <span id="storage-quota"></span>
+                </div>
+            </div>
+            <div class="button-group">
+                <button id="logout-btn" class="btn btn-secondary">Logout</button>
+                <button id="logout-all-btn" class="btn btn-danger">Logout All Devices</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/auth.js"></script>
+</body>
+</html>
