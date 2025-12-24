@@ -1,12 +1,3 @@
-/**
- * Vidnag Main Layout
- * Overall page structure and gradient background
- */
-
-/* ============================================================
-   GLOBAL LAYOUT
-   ============================================================ */
-
 * {
     margin: 0;
     padding: 0;
@@ -25,10 +16,6 @@ body {
     overflow-x: hidden;
     position: relative;
 }
-
-/* ============================================================
-   GRADIENT BACKGROUND
-   ============================================================ */
 
 .gradient-bg {
     position: fixed;
@@ -61,10 +48,6 @@ body {
     }
 }
 
-/* ============================================================
-   MAIN CONTENT
-   ============================================================ */
-
 .main-content {
     width: 95%;
     max-width: 95vw;
@@ -72,10 +55,6 @@ body {
     padding: var(--space-lg) 0;
     padding-top: calc(var(--space-lg) + 140px); /* Account for header + tabs */
 }
-
-/* ============================================================
-   LAYOUT PATTERNS
-   ============================================================ */
 
 /* 30/70 Split Layout */
 .split-layout {
@@ -105,10 +84,6 @@ body {
     width: 100%;
 }
 
-/* ============================================================
-   TAB CONTENT
-   ============================================================ */
-
 .tab-content {
     display: none;
     animation: fadeIn 0.3s ease-in;
@@ -127,20 +102,12 @@ body {
     }
 }
 
-/* ============================================================
-   EMPTY STATES
-   ============================================================ */
-
 .empty-state {
     text-align: center;
     color: var(--text-tertiary);
     padding: var(--space-lg);
     font-size: var(--text-sm);
 }
-
-/* ============================================================
-   FORM ELEMENTS
-   ============================================================ */
 
 .form-group {
     margin-bottom: var(--space-md);
@@ -153,10 +120,6 @@ body {
     font-size: var(--text-sm);
     font-weight: var(--font-medium);
 }
-
-/* ============================================================
-   FILTER CONTROLS
-   ============================================================ */
 
 .filter-controls {
     display: flex;
@@ -187,10 +150,6 @@ body {
     flex: 1;
     min-width: 200px;
 }
-
-/* ============================================================
-   RESPONSIVE DESIGN
-   ============================================================ */
 
 /* Tablet */
 @media (max-width: 1024px) {
@@ -252,10 +211,6 @@ body {
         padding: var(--space-sm);
     }
 }
-
-/* ============================================================
-   SCROLLBAR STYLING
-   ============================================================ */
 
 .glass-scrollbar {
     overflow-y: auto;
