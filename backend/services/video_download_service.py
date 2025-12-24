@@ -132,8 +132,16 @@ class VideoDownloadService:
             "storage"
         )
 
+        # Resolve to absolute path if relative
         import os
-        file_path = os.path.join(storage_path, "videos", uuid_filename)
+        from pathlib import Path
+        storage_path_obj = Path(storage_path)
+        if not storage_path_obj.is_absolute():
+            # Make relative to project root
+            project_root = Path(__file__).parent.parent.parent
+            storage_path_obj = project_root / storage_path
+
+        file_path = str(storage_path_obj / "videos" / uuid_filename)
 
         # Step 5: Create Video record
         video = Video(

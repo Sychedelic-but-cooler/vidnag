@@ -81,9 +81,19 @@ class DownloadWorker:
             max_size_mb = self.settings.get(SettingsLevel.ADMIN, "downloads.max_download_size_mb", 1000)
             timeout_seconds = self.settings.get(SettingsLevel.ADMIN, "downloads.timeout_seconds", 300)
 
+            # Resolve temp_path to absolute path if relative
+            temp_path_obj = Path(temp_path)
+            if not temp_path_obj.is_absolute():
+                # Make relative to project root
+                project_root = Path(__file__).parent.parent.parent
+                temp_path_obj = project_root / temp_path
+
+            # Ensure temp directory exists
+            temp_path_obj.mkdir(parents=True, exist_ok=True)
+
             # Generate temporary output path
             temp_filename = Path(video.file_path).name
-            temp_output_template = os.path.join(temp_path, f"{Path(temp_filename).stem}.%(ext)s")
+            temp_output_template = str(temp_path_obj / f"{Path(temp_filename).stem}.%(ext)s")
 
             # Update progress
             self._update_job_progress(job_id, 5.0, 'Starting download')
@@ -121,13 +131,20 @@ class DownloadWorker:
 
             # Move to final storage location
             storage_path = self.settings.get(SettingsLevel.APP, "storage.base_path", "storage")
-            video_storage_dir = os.path.join(storage_path, "videos")
+
+            # Resolve to absolute path if relative
+            storage_path_obj = Path(storage_path)
+            if not storage_path_obj.is_absolute():
+                project_root = Path(__file__).parent.parent.parent
+                storage_path_obj = project_root / storage_path
+
+            video_storage_dir = str(storage_path_obj / "videos")
 
             final_path = safe_move_file(
                 temp_output_path,
                 video_storage_dir,
                 Path(video.file_path).name,
-                storage_root=storage_path
+                storage_root=str(storage_path_obj)
             )
 
             self.logger.app.info(f"File moved to: {final_path}")
@@ -314,7 +331,14 @@ class DownloadWorker:
                     # Move partial file to storage
                     from backend.core.settings import SettingsLevel
                     storage_path = self.settings.get(SettingsLevel.APP, "storage.base_path", "storage")
-                    video_storage_dir = os.path.join(storage_path, "videos")
+
+                    # Resolve to absolute path if relative
+                    storage_path_obj = Path(storage_path)
+                    if not storage_path_obj.is_absolute():
+                        project_root = Path(__file__).parent.parent.parent
+                        storage_path_obj = project_root / storage_path
+
+                    video_storage_dir = str(storage_path_obj / "videos")
 
                     with self.db.session_scope() as session:
                         video = session.query(Video).filter(Video.id == video_id).first()
@@ -323,7 +347,7 @@ class DownloadWorker:
                                 temp_file,
                                 video_storage_dir,
                                 Path(video.file_path).name,
-                                storage_root=storage_path
+                                storage_root=str(storage_path_obj)
                             )
 
                             video.status = 'error'
