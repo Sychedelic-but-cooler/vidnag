@@ -51,12 +51,7 @@
 .tab-btn:hover {
     background: var(--glass-bg-strong);
     border-color: var(--glass-border-strong);
-    transform: translateY(-2px);
     box-shadow: var(--glass-shadow);
-}
-
-.tab-btn:active {
-    transform: translateY(0);
 }
 
 /* Active Tab */
@@ -156,15 +151,21 @@
 @media (max-width: 480px) {
     .tab-navigation {
         gap: 4px;
+        padding: var(--space-xs);
     }
 
     .tab-btn {
-        padding: var(--space-xs);
-        min-width: 44px;
+        padding: 6px;
+        min-width: 40px;
+        border-radius: var(--radius-sm);
     }
 
     .tab-icon {
-        font-size: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .tab-btn.active::after {
+        height: 1px;
     }
 }
 

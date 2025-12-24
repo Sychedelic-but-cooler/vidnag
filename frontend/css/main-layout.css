@@ -66,9 +66,10 @@ body {
    ============================================================ */
 
 .main-content {
-    max-width: 1600px;
+    width: 85%;
+    max-width: 85vw;
     margin: 0 auto;
-    padding: var(--space-lg);
+    padding: var(--space-lg) 0;
     padding-top: calc(var(--space-lg) + 140px); /* Account for header + tabs */
 }
 
@@ -120,11 +121,9 @@ body {
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
@@ -200,7 +199,9 @@ body {
     }
 
     .main-content {
-        padding: var(--space-md);
+        width: 90%;
+        max-width: 90vw;
+        padding: var(--space-md) 0;
         padding-top: calc(var(--space-md) + 130px);
     }
 }
@@ -209,10 +210,13 @@ body {
 @media (max-width: 768px) {
     .split-layout {
         grid-template-columns: 1fr;
+        gap: var(--space-md);
     }
 
     .main-content {
-        padding: var(--space-sm);
+        width: 95%;
+        max-width: 95vw;
+        padding: var(--space-sm) 0;
         padding-top: calc(var(--space-sm) + 120px);
     }
 
@@ -228,6 +232,24 @@ body {
     .file-controls .glass-select {
         width: 100%;
         min-width: auto;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .main-content {
+        width: 98%;
+        max-width: 98vw;
+        padding: var(--space-xs) 0;
+        padding-top: calc(var(--space-xs) + 110px);
+    }
+
+    .split-layout {
+        gap: var(--space-sm);
+    }
+
+    .glass-card {
+        padding: var(--space-sm);
     }
 }
 

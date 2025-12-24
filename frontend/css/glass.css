@@ -80,7 +80,6 @@
 .glass:hover {
     background: var(--glass-bg-strong);
     border-color: var(--glass-border-strong);
-    transform: translateY(-2px);
     box-shadow: var(--glass-shadow-strong);
 }
 
@@ -164,7 +163,6 @@
 
 .glass-card:hover {
     background: var(--glass-bg-strong);
-    transform: translateY(-2px);
     box-shadow: var(--glass-shadow-strong);
 }
 
@@ -247,12 +245,7 @@
 .glass-btn:hover {
     background: var(--glass-bg-strong);
     border-color: var(--glass-border-strong);
-    transform: translateY(-2px);
     box-shadow: var(--glass-shadow);
-}
-
-.glass-btn:active {
-    transform: translateY(0);
 }
 
 .glass-btn-primary {

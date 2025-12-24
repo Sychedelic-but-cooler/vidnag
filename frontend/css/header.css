@@ -71,7 +71,6 @@
 }
 
 .header-right .glass-btn-icon:hover {
-    transform: translateY(-2px) scale(1.05);
     box-shadow: var(--glass-shadow), var(--glass-glow);
 }
 
@@ -193,12 +192,47 @@
 
 /* Extra small devices */
 @media (max-width: 480px) {
+    .main-header {
+        padding: var(--space-xs);
+    }
+
+    .header-left {
+        gap: 1px;
+    }
+
+    .brand-name {
+        font-size: var(--text-base);
+    }
+
     .header-right {
         gap: 4px;
     }
 
+    .header-right .glass-btn-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .header-right .glass-btn-icon span {
+        font-size: 0.9rem;
+    }
+
+    #logout-btn {
+        width: 28px;
+        height: 28px;
+    }
+
+    #logout-btn::before {
+        font-size: 0.9rem;
+    }
+
     /* Hide help link on very small screens */
     .header-right a.glass-btn-icon[title="Help"] {
+        display: none;
+    }
+
+    /* Hide settings on extra small screens to save space */
+    #settings-btn {
         display: none;
     }
 }
